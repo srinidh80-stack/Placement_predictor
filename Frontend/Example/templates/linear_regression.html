@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Linear Regression - Placement Prediction{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p class="eyebrow">SUPERVISED LEARNING · REGRESSION</p>
+    <h1>Linear Regression</h1>
+    <p>Predicting continuous <strong>Salary Package (LPA)</strong> using train-test split linear regression models based on academic and assessment metrics.</p>
+</section>
+
+<!-- Dataset & Split Overview Card -->
+<section class="card hero-card">
+    <div class="card-heading">
+        <div>
+            <h2>Model Training Overview</h2>
+            <p>Trained strictly on placed student historical records with train-test separation to prevent data leakage.</p>
+        </div>
+        <span class="status-pill">Train-Test Split (80/20)</span>
+    </div>
+
+    <div class="dataset-info">
+        <div class="info-box">
+            <h3>{{ model_data.train_shape[0] }}</h3>
+            <p>Training Records (80%)</p>
+        </div>
+        <div class="info-box">
+            <h3>{{ model_data.test_shape[0] }}</h3>
+            <p>Test Records (20%)</p>
+        </div>
+        <div class="info-box">
+            <h3>{{ model_data.metrics.r2_percentage }}%</h3>
+            <p>R² Variance Explained</p>
+        </div>
+        <div class="info-box">
+            <h3>{{ model_data.metrics.rmse }}</h3>
+            <p>RMSE (LPA Error)</p>
+        </div>
+    </div>
+</section>
+
+<!-- Interactive Live Salary Predictor -->
+<section class="card">
+    <div class="card-heading">
+        <div>
+            <h2>Live Salary Package Predictor</h2>
+            <p>Enter a student's profile below to calculate their expected placement package using the learned model equation.</p>
+        </div>
+        <span class="status-pill">Interactive Inference</span>
+    </div>
+
+    <div class="prediction-container">
+        <!-- Input Form -->
+        <form class="prediction-form" method="POST" action="{{ url_for('linear_regression_page') }}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="cgpa">CGPA (out of 10):</label>
+                    <input type="number" id="cgpa" name="cgpa" step="0.01" min="4.0" max="10.0" value="{{ inputs.cgpa }}" required>
+                    <span class="form-hint">Candidate's cumulative grade point average (4.0 - 10.0)</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="coding_score">Coding Test Score (0 - 100):</label>
+                    <input type="number" id="coding_score" name="coding_score" step="0.1" min="0" max="100" value="{{ inputs.coding_score }}" required>
+                    <span class="form-hint">Assessment score in technical/coding tests</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="interview_score">Mock Interview Score (0 - 100):</label>
+                    <input type="number" id="interview_score" name="interview_score" step="0.1" min="0" max="100" value="{{ inputs.interview_score }}" required>
+                    <span class="form-hint">Performance in technical & HR mock rounds</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="aptitude_score">Aptitude Test Score (0 - 100):</label>
+                    <input type="number" id="aptitude_score" name="aptitude_score" step="0.1" min="0" max="100" value="{{ inputs.aptitude_score }}" required>
+                    <span class="form-hint">Quantitative & analytical reasoning score</span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="predict-submit-btn">Calculate Predicted Salary</button>
+            </div>
+        </form>
+
+        <!-- Prediction Result Card -->
+        <div class="prediction-result-card">
+            <p class="result-label">ESTIMATED PLACEMENT SALARY</p>
+            <div class="result-badge">
+                <span class="result-value">{{ prediction.predicted_salary }}</span>
+                <span class="result-unit">LPA</span>
+            </div>
+            <p class="result-note">Predicted package based on the fitted 4-feature hyperplane model.</p>
+
+            <div class="result-breakdown">
+                <h4>Component Contributions:</h4>
+                <ul>
+                    {% for item in prediction.breakdown %}
+                    <li>
+                        <span>{{ item.component }}</span>
+                        <strong>{{ '+' if item.value > 0 else '' }}{{ item.value }} LPA</strong>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Model Equation & Learned Parameters -->
+<section class="card">
+    <div class="card-heading">
+        <div>
+            <h2>Learned Model Hyperplane Equation</h2>
+            <p>The mathematical equation fitted on the training split data.</p>
+        </div>
+        <span class="status-pill">Parameters (θ)</span>
+    </div>
+
+    <div class="equation-box">
+        <code>Salary (LPA) = {{ model_data.intercept }} + ({{ model_data.coef_map.CGPA|round(3) }} × CGPA) + ({{ model_data.coef_map.CodingTestScore|round(3) }} × Coding) + ({{ model_data.coef_map.MockInterviewScore|round(3) }} × Interview) + ({{ model_data.coef_map.AptitudeTestScore|round(3) }} × Aptitude)</code>
+    </div>
+
+    <div class="table-wrap" style="margin-top: 18px;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Parameter / Feature</th>
+                    <th>Learned Weight (θ)</th>
+                    <th>Impact on Salary</th>
+                    <th>Interpretation</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for coef in model_data.coefficients %}
+                <tr>
+                    <td><strong>{{ coef.feature }}</strong></td>
+                    <td><code>{{ coef.weight }}</code></td>
+                    <td>{{ coef.impact }}</td>
+                    <td>{{ coef.description }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Visual Regression Diagrams & Cluster Analysis -->
+<section class="card">
+    <div class="card-heading">
+        <div>
+            <h2>Visual Regression Analysis & Cluster Gap</h2>
+            <p>Visualizing why the straight line cuts between the two salary clusters (~9 LPA vs ~20 LPA).</p>
+        </div>
+        <span class="status-pill">Visual Insights</span>
+    </div>
+
+    <div class="chart-grid">
+        <article class="card chart-card">
+            <h2>CGPA vs Salary Package & Fitted Line</h2>
+            <p style="font-size: 0.82rem; margin: -6px 0 10px; color: var(--muted);">Shows actual student points, the CGPA 8.0 cutoff, and where your current prediction lands on the line.</p>
+            <img src="{{ url_for('static', filename=diagrams.plot_line_fit) }}" alt="CGPA vs Salary Package with Linear Regression Line and Cluster Gap">
+        </article>
+
+        <article class="card chart-card">
+            <h2>Actual vs. Predicted Salary on Test Set</h2>
+            <p style="font-size: 0.82rem; margin: -6px 0 10px; color: var(--muted);">Compares predicted test values against actual salaries along the 1:1 diagonal line.</p>
+            <img src="{{ url_for('static', filename=diagrams.plot_actual_vs_pred) }}" alt="Actual vs Predicted Salary on Test Set">
+        </article>
+    </div>
+</section>
+
+<!-- Model Evaluation & Optimization Comparison -->
+<section class="card">
+    <div class="card-heading">
+        <div>
+            <h2>Evaluation Metrics & Optimization Methods</h2>
+            <p>Evaluation on unseen test set (20%) and comparison of training algorithms (Session 17-18).</p>
+        </div>
+        <span class="status-pill">Validation Score</span>
+    </div>
+
+    <div class="analysis-guide">
+        <div>
+            <span>R² Score</span>
+            <strong>{{ model_data.metrics.r2 }} ({{ model_data.metrics.r2_percentage }}%)</strong>
+            <p>Fraction of salary variation explained by the model.</p>
+        </div>
+        <div>
+            <span>Root Mean Squared Error</span>
+            <strong>{{ model_data.metrics.rmse }} LPA</strong>
+            <p>Average standard deviation of residuals / prediction errors.</p>
+        </div>
+        <div>
+            <span>Mean Absolute Error</span>
+            <strong>{{ model_data.metrics.mae }} LPA</strong>
+            <p>Average absolute magnitude of error per student.</p>
+        </div>
+        <div>
+            <span>Baseline Gain (vs CGPA only)</span>
+            <strong>+{{ model_data.baseline_cgpa.gain_r2 }}% R²</strong>
+            <p>Improvement over single-variable CGPA line (R² {{ model_data.baseline_cgpa.r2 }}).</p>
+        </div>
+    </div>
+
+    <div class="methods-comparison-grid">
+        <div class="method-card">
+            <h3>Normal Equation (Closed-Form)</h3>
+            <p class="method-formula"><code>θ̂ = (XᵀX)⁻¹ Xᵀy</code></p>
+            <ul>
+                <li>Exact closed-form mathematical solution in a single matrix inversion step.</li>
+                <li>Used by Scikit-Learn (<code>LinearRegression</code>) for fast convergence.</li>
+                <li>Requires no learning rate hyperparameter tuning.</li>
+            </ul>
+        </div>
+
+        <div class="method-card">
+            <h3>Batch Gradient Descent (Iterative)</h3>
+            <p class="method-formula"><code>θ := θ − α · ∇J(θ)</code></p>
+            <ul>
+                <li>Iterative optimization updating parameters over full-batch epochs.</li>
+                <li>Tuned with Learning Rate α = {{ model_data.gd_stats.learning_rate }} across {{ model_data.gd_stats.epochs }} epochs.</li>
+                <li>MSE cost reduced from {{ model_data.gd_stats.initial_cost }} down to {{ model_data.gd_stats.final_cost }}.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}

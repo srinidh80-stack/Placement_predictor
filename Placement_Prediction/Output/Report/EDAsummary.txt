@@ -1,0 +1,104 @@
+======================================================================
+       EXPLORATORY DATA ANALYSIS (EDA) SUMMARY REPORT
+                  Placement Prediction
+======================================================================
+
+1. DATASET OVERVIEW
+--------------------------------------------------
+  * Total Records (Rows): 50,000
+  * Total Features (Columns): 32
+  * Duplicate Rows: 0
+
+2. TARGET VARIABLE DISTRIBUTION (PlacementStatus)
+--------------------------------------------------
+  * Placed (1): 32,856 (65.71%)
+  * Not Placed (0): 17,144 (34.29%)
+
+3. MISSING VALUES SUMMARY
+--------------------------------------------------
+  * MockInterviewScore: 4,957 missing (9.91%)
+  * Workshops: 4,488 missing (8.98%)
+  * AptitudeTestScore: 4,029 missing (8.06%)
+  * SoftSkillsRating: 3,526 missing (7.05%)
+  * CodingTestScore: 2,976 missing (5.95%)
+
+4. NUMERICAL FEATURE DESCRIPTIVE STATISTICS
+--------------------------------------------------
+  * SGPA_Sem1              | Mean:    7.21 | Std:    1.52 | Min:    4.0 | Median:   7.19 | Max:   10.0 | Skew:  -0.01
+  * SGPA_Sem2              | Mean:    7.22 | Std:    1.53 | Min:    4.0 | Median:   7.21 | Max:   10.0 | Skew:  -0.02
+  * SGPA_Sem3              | Mean:    7.24 | Std:    1.55 | Min:    4.0 | Median:   7.22 | Max:   10.0 | Skew:  -0.03
+  * SGPA_Sem4              | Mean:    7.25 | Std:    1.57 | Min:    4.0 | Median:   7.24 | Max:   10.0 | Skew:  -0.04
+  * SGPA_Sem5              | Mean:    7.26 | Std:    1.59 | Min:    4.0 | Median:   7.26 | Max:   10.0 | Skew:  -0.05
+  * SGPA_Sem6              | Mean:    7.27 | Std:     1.6 | Min:    4.0 | Median:   7.28 | Max:   10.0 | Skew:  -0.06
+  * SGPA_Sem7              | Mean:    7.28 | Std:    1.62 | Min:    4.0 | Median:    7.3 | Max:   10.0 | Skew:  -0.08
+  * SGPA_Sem8              | Mean:    7.29 | Std:    1.64 | Min:    4.0 | Median:   7.31 | Max:   10.0 | Skew:  -0.08
+  * CGPA                   | Mean:    7.25 | Std:    1.62 | Min:    4.0 | Median:   7.25 | Max:   10.0 | Skew:  -0.07
+  * AttendancePercent      | Mean:   76.71 | Std:   12.47 | Min:   50.0 | Median:   77.2 | Max:  100.0 | Skew:  -0.12
+  * Internships            | Mean:    1.13 | Std:    0.81 | Min:    0.0 | Median:    1.0 | Max:    3.0 | Skew:   0.36
+  * Projects               | Mean:    2.11 | Std:    1.21 | Min:    0.0 | Median:    2.0 | Max:    5.0 | Skew:   0.28
+  * Workshops              | Mean:     1.8 | Std:    1.04 | Min:    0.0 | Median:    2.0 | Max:    4.0 | Skew:   0.08
+  * Certifications         | Mean:    1.93 | Std:    1.18 | Min:    0.0 | Median:    2.0 | Max:    5.0 | Skew:   0.12
+  * Publications           | Mean:    0.74 | Std:    0.72 | Min:    0.0 | Median:    1.0 | Max:    3.0 | Skew:   0.52
+  * AptitudeTestScore      | Mean:   68.86 | Std:   15.37 | Min:   30.0 | Median:   69.9 | Max:  100.0 | Skew:  -0.19
+  * SoftSkillsRating       | Mean:    3.15 | Std:    0.98 | Min:    1.0 | Median:    3.2 | Max:    5.0 | Skew:   -0.0
+  * CodingTestScore        | Mean:   57.41 | Std:   20.98 | Min:    0.0 | Median:   57.7 | Max:  100.0 | Skew:  -0.21
+  * MockInterviewScore     | Mean:   55.41 | Std:   17.52 | Min:   15.9 | Median:   54.7 | Max:  100.0 | Skew:   0.04
+  * Salary Package         | Mean:    9.54 | Std:    8.82 | Min:    0.0 | Median:   8.43 | Max:   26.0 | Skew:   0.39
+
+5. CATEGORICAL BREAKDOWN & PLACEMENT RATES
+--------------------------------------------------
+  * CollegeTier:
+      - Tier1             : 90.81% placement rate
+      - Tier2             : 69.77% placement rate
+      - Tier3             : 30.19% placement rate
+  * Stream:
+      - CS                : 67.17% placement rate
+      - EE                : 65.64% placement rate
+      - ECE               : 65.32% placement rate
+      - Civil             : 65.15% placement rate
+      - Mechanical        : 64.88% placement rate
+      - IT                : 64.86% placement rate
+  * Specialisation:
+      - AI                : 66.23% placement rate
+      - Networking        : 65.84% placement rate
+      - Embedded          : 65.64% placement rate
+      - DataScience       : 65.17% placement rate
+  * Hostel:
+      - No                : 65.93% placement rate
+      - Yes               : 65.54% placement rate
+  * CGPA_Tier:
+      - High              : 99.11% placement rate
+      - Mid               : 77.93% placement rate
+      - Low               : 20.31% placement rate
+
+6. TOP CORRELATIONS WITH PLACEMENT STATUS
+--------------------------------------------------
+  * Salary Package        : +0.7740 (Positive)
+  * SGPA_Sem8             : +0.7070 (Positive)
+  * SGPA_Sem7             : +0.7020 (Positive)
+  * SGPA_Sem6             : +0.6960 (Positive)
+  * SGPA_Sem5             : +0.6910 (Positive)
+  * SGPA_Sem4             : +0.6840 (Positive)
+  * SGPA_Sem3             : +0.6780 (Positive)
+  * SGPA_Sem2             : +0.6720 (Positive)
+  * MockInterviewScore    : +0.6680 (Positive)
+  * SGPA_Sem1             : +0.6650 (Positive)
+  * CGPA                  : +0.6490 (Positive)
+  * SoftSkillsRating      : +0.6250 (Positive)
+  * CodingTestScore       : +0.6130 (Positive)
+  * Certifications        : +0.6010 (Positive)
+  * Workshops             : +0.5820 (Positive)
+  * Projects              : +0.5800 (Positive)
+  * AptitudeTestScore     : +0.5780 (Positive)
+  * AttendancePercent     : +0.5540 (Positive)
+  * Internships           : +0.5260 (Positive)
+  * Publications          : +0.4690 (Positive)
+
+7. OUTLIER ANALYSIS (IQR Method)
+--------------------------------------------------
+  * CodingTestScore       : 408 outliers detected
+  * Publications          : 259 outliers detected
+
+======================================================================
+                       END OF REPORT
+======================================================================

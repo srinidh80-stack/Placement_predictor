@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}EDA · Placement Prediction{% endblock %}
+{% block content %}
+<section class="page-intro"><p class="eyebrow">EXPLORATORY DATA ANALYSIS</p><h1>Placement insights</h1><p>Complete analysis of <strong>{{ dataset_name }}</strong> on one page.</p></section>
+
+<section class="card hero-card"><div class="card-heading"><div><h2>Dataset overview</h2><p>Initial data-quality checks and placement indicators.</p></div><span class="status-pill">{{ overview.rows }} records</span></div><div class="dataset-info"><div class="info-box"><h3>{{ overview.rows }}</h3><p>Rows</p></div><div class="info-box"><h3>{{ overview.cols }}</h3><p>Columns</p></div><div class="info-box"><h3>{{ overview.duplicate_rows }}</h3><p>Duplicate rows</p></div><div class="info-box"><h3>{{ overview.anomaly_rate if overview.anomaly_rate is not none else '—' }}{% if overview.anomaly_rate is not none %}%{% endif %}</h3><p>Anomaly rate</p></div></div></section>
+
+<section class="card"><h2>Data types</h2><div class="columns">{% for item in overview.data_types %}<span class="column">{{ item.column }}: {{ item.dtype }}</span>{% endfor %}</div></section>
+<section class="card"><h2>Missing values</h2>{% if overview.missing_table %}<div class="table-wrap"><table><thead><tr><th>Column</th><th>Missing values</th><th>Missing %</th></tr></thead><tbody>{% for row in overview.missing_table %}<tr><td>{{ row.column }}</td><td>{{ row.count }}</td><td>{{ row.percent }}%</td></tr>{% endfor %}</tbody></table></div>{% else %}<p class="success-message">No missing values found.</p>{% endif %}</section>
+<section class="card"><h2>Duplicate-row check</h2>{% if overview.duplicate_rows == 0 %}<p class="success-message">No duplicate rows were found.</p>{% else %}<div class="table-wrap"><table><thead><tr>{% for column in overview.columns %}<th>{{ column }}</th>{% endfor %}</tr></thead><tbody>{% for row in overview.duplicate_preview %}<tr>{% for column in overview.columns %}<td>{{ row[column] }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>{% endif %}</section>
+{% for label, rows in [('First 10 rows (head)', overview.head_rows), ('Last 10 rows (tail)', overview.tail_rows)] %}<section class="card"><h2>{{ label }}</h2><div class="table-wrap"><table><thead><tr>{% for column in overview.columns %}<th>{{ column }}</th>{% endfor %}</tr></thead><tbody>{% for row in rows %}<tr>{% for column in overview.columns %}<td>{{ row[column] }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div></section>{% endfor %}
+
+<section class="card"><h2>Univariate analysis: numeric summary</h2><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Mean</th><th>Std.</th><th>Min</th><th>Median</th><th>Max</th><th>Skew</th></tr></thead><tbody>{% for row in univariate.numeric_table %}<tr><td>{{ row.column }}</td><td>{{ row.mean }}</td><td>{{ row.std }}</td><td>{{ row.min }}</td><td>{{ row['50%'] }}</td><td>{{ row.max }}</td><td>{{ row.skew }}</td></tr>{% endfor %}</tbody></table></div></section>
+<section class="card"><h2>Univariate analysis: categorical frequencies</h2><div class="frequency-grid">{% for column, values in univariate.categorical_freq.items() %}<div><h3>{{ column }}</h3>{% for value, count in values.items() %}<p>{{ value }} <strong>{{ count }}</strong></p>{% endfor %}</div>{% endfor %}</div></section>
+
+<section class="card"><h2>Bivariate analysis: placement rate by category</h2><div class="frequency-grid">{% for column, values in bivariate.placement_rate.items() %}<div><h3>{{ column }}</h3>{% for value, rate in values.items() %}<p>{{ value }} <strong>{{ rate }}%</strong></p>{% endfor %}</div>{% endfor %}</div></section>
+<section class="card"><h2>Potential outliers (IQR rule)</h2><p>Values below Q1 − 1.5 × IQR or above Q3 + 1.5 × IQR.</p><div class="columns">{% for feature, count in bivariate.outliers.items() %}<span class="column">{{ feature }}: {{ count }}</span>{% endfor %}</div></section>
+
+<section class="card"><h2>Multivariate analysis: salary package</h2><div class="columns">{% for name, value in multivariate.salary_desc.items() %}<span class="column">{{ name }}: {{ value }}</span>{% endfor %}</div></section>
+<section class="card"><h2>Average SGPA trend by placement status</h2><div class="table-wrap"><table><thead><tr><th>Status</th>{% for semester in range(1, 9) %}<th>Semester {{ semester }}</th>{% endfor %}</tr></thead><tbody>{% for status, values in multivariate.sgpa_trend.items() %}<tr><td>{{ 'Placed' if status == 1 else 'Not placed' }}</td>{% for semester in range(1, 9) %}<td>{{ values.get('SGPA_Sem' ~ semester, '—') }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div></section>
+<section class="card"><h2>Correlation with placement status</h2><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Correlation</th></tr></thead><tbody>{% for feature, value in correlation.top_correlations.items() %}<tr><td>{{ feature }}</td><td>{{ value }}</td></tr>{% endfor %}</tbody></table></div></section>
+
+<section class="card">
+  <div class="card-heading">
+    <div>
+      <h2>Visual insights</h2>
+      <p>Histogram and box-plot views generated for the uploaded dataset.</p>
+    </div>
+  </div>
+  {% if plots %}
+  <div class="chart-grid">
+    {% for plot in plots %}
+    <article class="card chart-card"><img src="{{ plot }}" alt="Placement analysis chart"></article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="success-message">Charts will appear here once the dataset is loaded.</p>
+  {% endif %}
+</section>
+{% endblock %}

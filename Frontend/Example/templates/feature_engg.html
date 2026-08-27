@@ -1,0 +1,860 @@
+{% extends "base.html" %}
+
+{% block title %}Feature Engineering & Models - Placement Prediction{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p class="eyebrow">NEXT STEP</p>
+    <h1>Feature Engineering & Supervised Models</h1>
+    <p>{{ dataset_name }} is cleaned, split into train/test data, encoded, scaled, and modeled with Linear &amp; Logistic Regression.</p>
+</section>
+
+<section class="card hero-card">
+    <div class="card-heading">
+        <div>
+            <h2>Cleaned dataset</h2>
+            <p>Missing score values are median-imputed, duplicate StudentID records are removed, and features prepared for training.</p>
+        </div>
+        <span class="status-pill">Ready for feature engineering &amp; modeling</span>
+    </div>
+
+    <div class="dataset-info">
+        <div class="info-box"><h3>{{ cleaned_shape[0] }}</h3><p>Rows</p></div>
+        <div class="info-box"><h3>{{ cleaned_shape[1] }}</h3><p>Columns</p></div>
+        <div class="info-box"><h3>{{ duplicate_count }}</h3><p>Duplicates removed</p></div>
+        <div class="info-box"><h3>{{ feature_columns|length }}</h3><p>Scaled features</p></div>
+    </div>
+</section>
+
+<section class="card">
+    <h2>Numeric feature columns</h2>
+    <div class="columns">
+        {% for column in feature_columns %}
+            <span class="column">{{ column }}</span>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="folder-grid" aria-label="Feature engineering and modeling topic folders">
+    <!-- Folder 01: Numeric Scaling -->
+    <article class="folder-box" data-target="scaling-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 01</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Numeric Scaling</h2>
+            <p class="folder-desc">First group: Min-Max, Standard (Z-score), and Robust scaling outputs.</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. Min-Max</span>
+                <span class="topic-pill">2. Standard</span>
+                <span class="topic-pill">3. Robust</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 Scaling Methods Overview</h4>
+            <ul>
+                <li><strong>Min-Max Scaling:</strong> Rescales numerical features into [0, 1] range.</li>
+                <li><strong>Standard Scaling:</strong> Transforms features to zero mean and unit variance (Z-score).</li>
+                <li><strong>Robust Scaling:</strong> Uses Median &amp; IQR to resist extreme outliers.</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="scaling-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 02: Categorical Encoding -->
+    <article class="folder-box" data-target="encoding-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 02</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Categorical Encoding</h2>
+            <p class="folder-desc">Second group: One-hot, Ordinal, and Target encoding outputs.</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. One-Hot</span>
+                <span class="topic-pill">2. Ordinal</span>
+                <span class="topic-pill">3. Target</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 Encoding Methods Overview</h4>
+            <ul>
+                <li><strong>One-Hot Encoding:</strong> Creates binary dummy indicator variables for nominal categories.</li>
+                <li><strong>Ordinal Encoding:</strong> Maps ordered categorical levels into numeric ranks.</li>
+                <li><strong>Target Encoding:</strong> Replaces categories with target placement rate probabilities.</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="encoding-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 03: Missing Values -->
+    <article class="folder-box" data-target="missing-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 03</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Missing Values</h2>
+            <p class="folder-desc">Third group: Deletion, Imputation concepts, and missing audit.</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. Deletion</span>
+                <span class="topic-pill">2. Imputation</span>
+                <span class="topic-pill">3. Indicators &amp; Audit</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 Missing Values Overview</h4>
+            <ul>
+                <li><strong>Deletion Strategies:</strong> Removal of sparse columns/rows with high missingness.</li>
+                <li><strong>Imputation Techniques:</strong> Median &amp; Mean filling to preserve statistical distribution.</li>
+                <li><strong>Missing Audit:</strong> Column-wise missing count and percentage before cleaning.</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="missing-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 04: Linear Regression -->
+    <article class="folder-box" data-target="linear-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 04</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Linear Regression</h2>
+            <p class="folder-desc">Continuous Salary Package (LPA) prediction using 4-feature hyperplane equations &amp; Gradient Descent.</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. Salary Predictor</span>
+                <span class="topic-pill">2. Hyperplane θ</span>
+                <span class="topic-pill">3. Normal Eq vs GD</span>
+                <span class="topic-pill">4. Visual Fit</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 Linear Regression Overview</h4>
+            <ul>
+                <li><strong>Continuous Prediction:</strong> Estimates placement salary packages (LPA) on placed candidates.</li>
+                <li><strong>Normal Equation:</strong> Closed-form exact solution <code>θ̂ = (XᵀX)⁻¹Xᵀy</code>.</li>
+                <li><strong>Batch Gradient Descent:</strong> Iterative MSE minimization <code>θ := θ − α∇J(θ)</code>.</li>
+                <li><strong>Evaluation Metrics:</strong> R² ({{ linear_model_data.metrics.r2_percentage }}%), RMSE ({{ linear_model_data.metrics.rmse }} LPA), MAE ({{ linear_model_data.metrics.mae }} LPA).</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="linear-output">
+                <span>👁️</span> <span class="btn-text">Show Model</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 05: Logistic Regression -->
+    <article class="folder-box" data-target="logistic-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 05</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Logistic Regression</h2>
+            <p class="folder-desc">Binary placement status (Placed / Not Placed) &amp; Softmax 3-class tier classification.</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. Placement Classifier</span>
+                <span class="topic-pill">2. Sigmoid σ(z)</span>
+                <span class="topic-pill">3. Softmax Tiers</span>
+                <span class="topic-pill">4. Decision Boundary</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 Logistic Regression Overview</h4>
+            <ul>
+                <li><strong>Binary Classification:</strong> Sigmoid activation <code>σ(z) = 1/(1+e⁻ᶻ)</code> for Placed vs Not Placed.</li>
+                <li><strong>Cross-Entropy Loss:</strong> Convex Log Loss function replacing non-convex MSE.</li>
+                <li><strong>Multinomial Softmax:</strong> Classifies salary packages into Not Placed / Standard / Premium tiers.</li>
+                <li><strong>Accuracy &amp; AUC:</strong> {{ logistic_model_data.metrics.accuracy }}% Accuracy, {{ logistic_model_data.metrics.auc }} ROC-AUC.</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="logistic-output">
+                <span>👁️</span> <span class="btn-text">Show Model</span>
+            </button>
+        </div>
+    </article>
+</section>
+
+<!-- PANEL 01: Scaling Output -->
+<div class="topic-panel" id="scaling-output" hidden>
+    {% for output in scaler_outputs %}
+    <section class="card">
+        <div class="card-heading">
+            <div>
+                <h2>{{ output.label }}</h2>
+                <p>Train shape: {{ output.train_shape[0] }} rows x {{ output.train_shape[1] }} columns | Test shape: {{ output.test_shape[0] }} rows x {{ output.test_shape[1] }} columns</p>
+            </div>
+            <span class="status-pill">{{ output.method }}</span>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>{% for column in output.preview_columns %}<th>{{ column }}</th>{% endfor %}</tr>
+                </thead>
+                <tbody>
+                    {% for row in output.preview %}
+                        <tr>{% for column in output.preview_columns %}<td>{{ row[column] }}</td>{% endfor %}</tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endfor %}
+</div>
+
+<!-- PANEL 02: Encoding Output -->
+<div class="topic-panel" id="encoding-output" hidden>
+    {% for output in encoder_outputs %}
+    <section class="card">
+        <div class="card-heading">
+            <div>
+                <h2>{{ output.label }}</h2>
+                <p>Train shape: {{ output.train_shape[0] }} rows x {{ output.train_shape[1] }} columns | Test shape: {{ output.test_shape[0] }} rows x {{ output.test_shape[1] }} columns</p>
+            </div>
+            <span class="status-pill">{{ output.method }}</span>
+        </div>
+
+        <div class="columns">
+            {% for column in output.input_columns %}
+                <span class="column">{{ column }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>{% for column in output.preview_columns %}<th>{{ column }}</th>{% endfor %}</tr>
+                </thead>
+                <tbody>
+                    {% for row in output.preview %}
+                        <tr>{% for column in output.preview_columns %}<td>{{ row[column] }}</td>{% endfor %}</tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endfor %}
+</div>
+
+<!-- PANEL 03: Missing Values Output -->
+<div class="topic-panel" id="missing-output" hidden>
+    <section class="card">
+        <div class="card-heading">
+            <div>
+                <h2>Handling missing values concepts</h2>
+                <p>Session 13-14 concepts used before scaling and encoding.</p>
+            </div>
+            <span class="status-pill">missing-values</span>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Concept</th><th>Meaning</th></tr>
+                </thead>
+                <tbody>
+                    {% for concept, description in missing_value_concepts %}
+                        <tr><td>{{ concept }}</td><td>{{ description }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-heading">
+            <div>
+                <h2>Missing values detected</h2>
+                <p>Counts are computed from the current dataset before cleaning.</p>
+            </div>
+            <span class="status-pill">audit</span>
+        </div>
+
+        {% if missing_summary %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Column</th><th>Missing rows</th><th>Missing %</th></tr>
+                </thead>
+                <tbody>
+                    {% for row in missing_summary %}
+                        <tr>
+                            <td>{{ row.column }}</td>
+                            <td>{{ row.missing_count }}</td>
+                            <td>{{ row.missing_percent }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p>No missing values were detected in the current dataset.</p>
+        {% endif %}
+    </section>
+</div>
+
+<!-- PANEL 04: Linear Regression Output -->
+<div class="topic-panel" id="linear-output" hidden>
+    <!-- Split & Metric Summary Card -->
+    <section class="card hero-card">
+        <div class="card-heading">
+            <div>
+                <h2>Linear Regression · Model Training Overview</h2>
+                <p>Trained strictly on placed student historical records with train-test separation to prevent data leakage.</p>
+            </div>
+            <span class="status-pill">Train-Test Split (80/20)</span>
+        </div>
+
+        <div class="dataset-info">
+            <div class="info-box">
+                <h3>{{ linear_model_data.train_shape[0] }}</h3>
+                <p>Training Records (80%)</p>
+            </div>
+            <div class="info-box">
+                <h3>{{ linear_model_data.test_shape[0] }}</h3>
+                <p>Test Records (20%)</p>
+            </div>
+            <div class="info-box">
+                <h3>{{ linear_model_data.metrics.r2_percentage }}%</h3>
+                <p>R² Variance Explained</p>
+            </div>
+            <div class="info-box">
+                <h3>{{ linear_model_data.metrics.rmse }}</h3>
+                <p>RMSE (LPA Error)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Live Salary Predictor -->
+    <section class="card">
+        <div class="card-heading">
+            <div>
+                <h2>Live Salary Package Predictor</h2>
+                <p>Enter a student's profile below to calculate their expected placement package using the learned model equation.</p>
+            </div>
+            <span class="status-pill">Interactive Inference</span>
+        </div>
+
+        <div class="prediction-container">
+            <!-- Input Form -->
+            <form class="prediction-form" method="POST" action="{{ url_for('feature_engg_page') }}#linear-output">
+                <input type="hidden" name="model_type" value="linear">
+                <input type="hidden" name="active_folder" value="linear-output">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="lin_cgpa">CGPA (out of 10):</label>
+                        <input type="number" id="lin_cgpa" name="cgpa" step="0.01" min="4.0" max="10.0" value="{{ linear_inputs.cgpa }}" required>
+                        <span class="form-hint">Candidate's cumulative grade point average (4.0 - 10.0)</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lin_coding">Coding Test Score (0 - 100):</label>
+                        <input type="number" id="lin_coding" name="coding_score" step="0.1" min="0" max="100" value="{{ linear_inputs.coding_score }}" required>
+                        <span class="form-hint">Assessment score in technical/coding tests</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lin_interview">Mock Interview Score (0 - 100):</label>
+                        <input type="number" id="lin_interview" name="interview_score" step="0.1" min="0" max="100" value="{{ linear_inputs.interview_score }}" required>
+                        <span class="form-hint">Performance in technical &amp; HR mock rounds</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lin_aptitude">Aptitude Test Score (0 - 100):</label>
+                        <input type="number" id="lin_aptitude" name="aptitude_score" step="0.1" min="0" max="100" value="{{ linear_inputs.aptitude_score }}" required>
+                        <span class="form-hint">Quantitative &amp; analytical reasoning score</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="predict-submit-btn">Calculate Predicted Salary</button>
+                </div>
+            </form>
+
+            <!-- Prediction Result Card -->
+            <div class="prediction-result-card">
+                <p class="result-label">ESTIMATED PLACEMENT SALARY</p>
+                <div class="result-badge">
+                    <span class="result-value">{{ linear_prediction.predicted_salary }}</span>
+                    <span class="result-unit">LPA</span>
+                </div>
+                <p class="result-note">Predicted package based on the fitted 4-feature hyperplane model.</p>
+
+                <div class="result-breakdown">
+                    <h4>Component Contributions:</h4>
+                    <ul>
+                        {% for item in linear_prediction.breakdown %}
+                        <li>
+                            <span>{{ item.component }}</span>
+                            <strong>{{ '+' if item.value > 0 else '' }}{{ item.value }} LPA</strong>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Model Equation & Learned Parameters -->
+    <section class="card">
+        <div class="card-heading">
+            <div>
+                <h2>Learned Model Hyperplane Equation</h2>
+                <p>The mathematical equation fitted on the training split data.</p>
+            </div>
+            <span class="status-pill">Parameters (θ)</span>
+        </div>
+
+        <div class="equation-box">
+            <code>Salary (LPA) = {{ linear_model_data.intercept }} + ({{ linear_model_data.coef_map.CGPA|round(3) }} × CGPA) + ({{ linear_model_data.coef_map.CodingTestScore|round(3) }} × Coding) + ({{ linear_model_data.coef_map.MockInterviewScore|round(3) }} × Interview) + ({{ linear_model_data.coef_map.AptitudeTestScore|round(3) }} × Aptitude)</code>
+        </div>
+
+        <div class="table-wrap" style="margin-top: 18px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter / Feature</th>
+                        <th>Learned Weight (θ)</th>
+                        <th>Impact on Salary</th>
+                        <th>Interpretation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for coef in linear_model_data.coefficients %}
+                    <tr>
+                        <td><strong>{{ coef.feature }}</strong></td>
+                        <td><code>{{ coef.weight }}</code></td>
+                        <td>{{ coef.impact }}</td>
+                        <td>{{ coef.description }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Visual Regression Diagrams & Cluster Analysis -->
+    <section class="card">
+        <div class="card-heading">
+            <div>
+                <h2>Visual Regression Analysis &amp; Cluster Gap</h2>
+                <p>Visualizing why the straight line cuts between the two salary clusters (~9 LPA vs ~20 LPA).</p>
+            </div>
+            <span class="status-pill">Visual Insights</span>
+        </div>
+
+        <div class="chart-grid">
+            <article class="card chart-card">
+                <h2>CGPA vs Salary Package &amp; Fitted Line</h2>
+                <p style="font-size: 0.82rem; margin: -6px 0 10px; color: var(--muted);">Shows actual student points, the CGPA 8.0 cutoff, and where your current prediction lands on the line.</p>
+                <img src="{{ url_for('static', filename=linear_diagrams.plot_line_fit) }}" alt="CGPA vs Salary Package with Linear Regression Line and Cluster Gap">
+            </article>
+
+            <article class="card chart-card">
+                <h2>Actual vs. Predicted Salary on Test Set</h2>
+                <p style="font-size: 0.82rem; margin: -6px 0 10px; color: var(--muted);">Compares predicted test values against actual salaries along the 1:1 diagonal line.</p>
+                <img src="{{ url_for('static', filename=linear_diagrams.plot_actual_vs_pred) }}" alt="Actual vs Predicted Salary on Test Set">
+            </article>
+        </div>
+    </section>
+
+    <!-- Model Evaluation & Optimization Comparison -->
+    <section class="card">
+        <div class="card-heading">
+            <div>
+                <h2>Evaluation Metrics &amp; Optimization Methods</h2>
+                <p>Evaluation on unseen test set (20%) and comparison of training algorithms (Session 17-18).</p>
+            </div>
+            <span class="status-pill">Validation Score</span>
+        </div>
+
+        <div class="analysis-guide">
+            <div>
+                <span>R² Score</span>
+                <strong>{{ linear_model_data.metrics.r2 }} ({{ linear_model_data.metrics.r2_percentage }}%)</strong>
+                <p>Fraction of salary variation explained by the model.</p>
+            </div>
+            <div>
+                <span>Root Mean Squared Error</span>
+                <strong>{{ linear_model_data.metrics.rmse }} LPA</strong>
+                <p>Average standard deviation of residuals / prediction errors.</p>
+            </div>
+            <div>
+                <span>Mean Absolute Error</span>
+                <strong>{{ linear_model_data.metrics.mae }} LPA</strong>
+                <p>Average absolute magnitude of error per student.</p>
+            </div>
+            <div>
+                <span>Baseline Gain (vs CGPA only)</span>
+                <strong>+{{ linear_model_data.baseline_cgpa.gain_r2 }}% R²</strong>
+                <p>Improvement over single-variable CGPA line (R² {{ linear_model_data.baseline_cgpa.r2 }}).</p>
+            </div>
+        </div>
+
+        <div class="methods-comparison-grid">
+            <div class="method-card">
+                <h3>Normal Equation (Closed-Form)</h3>
+                <p class="method-formula"><code>θ̂ = (XᵀX)⁻¹ Xᵀy</code></p>
+                <ul>
+                    <li>Exact closed-form mathematical solution in a single matrix inversion step.</li>
+                    <li>Used by Scikit-Learn (<code>LinearRegression</code>) for fast convergence.</li>
+                    <li>Requires no learning rate hyperparameter tuning.</li>
+                </ul>
+            </div>
+
+            <div class="method-card">
+                <h3>Batch Gradient Descent (Iterative)</h3>
+                <p class="method-formula"><code>θ := θ − α · ∇J(θ)</code></p>
+                <ul>
+                    <li>Iterative optimization updating parameters over full-batch epochs.</li>
+                    <li>Tuned with Learning Rate α = {{ linear_model_data.gd_stats.learning_rate }} across {{ linear_model_data.gd_stats.epochs }} epochs.</li>
+                    <li>MSE cost reduced from {{ linear_model_data.gd_stats.initial_cost }} down to {{ linear_model_data.gd_stats.final_cost }}.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- PANEL 05: Logistic Regression Output -->
+<div class="topic-panel" id="logistic-output" hidden>
+    <!-- Overview Metrics Card -->
+    <section class="card hero-card">
+        <div class="card-heading">
+            <div>
+                <h2>Logistic Regression · Classification Performance</h2>
+                <p>Trained on 40,000 student records and validated on 10,000 test cases with stratified 80/20 train-test split.</p>
+            </div>
+            <span class="status-pill">Binary + 3-Class Softmax</span>
+        </div>
+
+        <div class="dataset-info">
+            <div class="info-box">
+                <h3>{{ logistic_model_data.metrics.accuracy }}%</h3>
+                <p>Validation Accuracy</p>
+            </div>
+            <div class="info-box">
+                <h3>{{ logistic_model_data.metrics.auc }}</h3>
+                <p>ROC-AUC Score</p>
+            </div>
+            <div class="info-box">
+                <h3>{{ logistic_model_data.class_balance.placed_pct }}%</h3>
+                <p>Class Balance (Placed)</p>
+            </div>
+            <div class="info-box">
+                <h3>{{ logistic_model_data.metrics.log_loss }}</h3>
+                <p>Cross-Entropy (Log Loss)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Placement Classifier & Softmax Form -->
+    <section class="card">
+        <div class="card-heading">
+            <div>
+                <h2>Live Placement &amp; Package Tier Classifier</h2>
+                <p>Enter a candidate's profile to calculate their placement probability and predicted salary tier.</p>
+            </div>
+            <span class="status-pill">Live Inference</span>
+        </div>
+
+        <div class="prediction-container">
+            <!-- Input Form -->
+            <form class="prediction-form" method="POST" action="{{ url_for('feature_engg_page') }}#logistic-output">
+                <input type="hidden" name="model_type" value="logistic">
+                <input type="hidden" name="active_folder" value="logistic-output">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="log_cgpa">CGPA (out of 10):</label>
+                        <input type="number" id="log_cgpa" name="cgpa" step="0.01" min="4.0" max="10.0" value="{{ logistic_inputs.CGPA }}" required>
+                        <span class="form-hint">Cumulative Grade Point Average</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="log_coding">Coding Test Score (0 - 100):</label>
+                        <input type="number" id="log_coding" name="coding_score" step="0.1" min="0" max="100" value="{{ logistic_inputs.CodingTestScore }}" required>
+                        <span class="form-hint">Technical coding test score</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="log_interview">Mock Interview Score (0 - 100):</label>
+                        <input type="number" id="log_interview" name="interview_score" step="0.1" min="0" max="100" value="{{ logistic_inputs.MockInterviewScore }}" required>
+                        <span class="form-hint">Technical &amp; HR interview assessment</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="log_aptitude">Aptitude Test Score (0 - 100):</label>
+                        <input type="number" id="log_aptitude" name="aptitude_score" step="0.1" min="0" max="100" value="{{ logistic_inputs.AptitudeTestScore }}" required>
+                        <span class="form-hint">Quantitative &amp; logical reasoning score</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="log_attendance">Attendance Percentage (0 - 100):</label>
+                        <input type="number" id="log_attendance" name="attendance" step="0.1" min="0" max="100" value="{{ logistic_inputs.AttendancePercent }}" required>
+                        <span class="form-hint">Overall academic attendance</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="log_softskills">Soft Skills Rating (1.0 - 5.0):</label>
+                        <input type="number" id="log_softskills" name="softskills" step="0.1" min="1.0" max="5.0" value="{{ logistic_inputs.SoftSkillsRating }}" required>
+                        <span class="form-hint">Communication &amp; behavioral score</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="predict-submit-btn">Classify Placement &amp; Package Tier</button>
+                </div>
+            </form>
+
+            <!-- Prediction Result Card -->
+            <div class="prediction-result-card">
+                <p class="result-label">PREDICTED OUTCOME</p>
+                <div class="result-badge">
+                    <span class="result-value" style="color: {{ '#0b8276' if logistic_prediction.is_placed else '#d84f40' }};">
+                        {{ logistic_prediction.placement_status }}
+                    </span>
+                </div>
+                <p class="result-note">
+                    Placement Probability: <strong>{{ logistic_prediction.prob_placed }}%</strong> (Decision Threshold = 50%)
+                </p>
+
+                <div class="result-breakdown">
+                    <h4>Softmax 3-Class Package Tier:</h4>
+                    <div style="margin-bottom: 12px; font-weight: 700; color: var(--blue);">
+                        Predicted Tier: {{ logistic_prediction.softmax_tier }}
+                    </div>
+                    <ul>
+                        {% for tier in logistic_prediction.tier_probabilities %}
+                        <li>
+                            <span>{{ tier.tier }}</span>
+                            <strong>{{ tier.prob }}%</strong>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visual Classification Diagrams -->
+    <section class="card">
+        <div class="card-heading">
+            <div>
+                <h2>Visual Classification Analysis &amp; Decision Boundaries</h2>
+                <p>Empirical S-curve sigmoid transformation and 2-variable decision boundary contours (Sessions 20-22).</p>
+            </div>
+            <span class="status-pill">Visual Insights</span>
+        </div>
+
+        <div class="chart-grid">
+            <article class="card chart-card">
+                <h2>Empirical CGPA vs Placement S-Curve</h2>
+                <p style="font-size: 0.82rem; margin: -6px 0 10px; color: var(--muted);">Shows the empirical fraction placed per CGPA bin squashed through the sigmoid function σ(z).</p>
+                <img src="{{ url_for('static', filename=logistic_diagrams.plot_s_curve) }}" alt="CGPA vs Placement S-Curve">
+            </article>
+
+            <article class="card chart-card">
+                <h2>2D Decision Boundary (CGPA + Coding Score)</h2>
+                <p style="font-size: 0.82rem; margin: -6px 0 10px; color: var(--muted);">Contour map separating predicted Placed vs Not Placed regions at threshold σ(z) = 0.5.</p>
+                <img src="{{ url_for('static', filename=logistic_diagrams.plot_decision_boundary) }}" alt="Decision Boundary (CGPA vs Coding Test Score)">
+            </article>
+        </div>
+    </section>
+
+    <!-- Standalone Feature Predictive Power (AUC Rankings) -->
+    <section class="card">
+        <div class="card-heading">
+            <div>
+                <h2>Feature Predictive Power (Standalone ROC-AUC Rankings)</h2>
+                <p>Comparing each feature's standalone discriminatory ability (AUC: 1.0 = Perfect, 0.5 = Random Chance).</p>
+            </div>
+            <span class="status-pill">AUC Analysis</span>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature Column</th>
+                        <th>ROC-AUC Score</th>
+                        <th>Predictive Strength</th>
+                        <th>Significance in Placement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in logistic_model_data.auc_ranking %}
+                    <tr>
+                        <td><strong>{{ item.feature }}</strong></td>
+                        <td><code>{{ item.auc }}</code></td>
+                        <td><span class="status-pill" style="background: {{ '#e8f8f4' if item.auc >= 0.85 else '#fff8ea' }}; color: {{ '#0b8276' if item.auc >= 0.85 else '#a74d10' }};">{{ item.power }}</span></td>
+                        <td>
+                            {% if item.feature == 'CGPA' %}Primary academic cutoff factor in campus screening
+                            {% elif item.feature == 'MockInterviewScore' %}Strong indicator of final HR &amp; technical round conversion
+                            {% elif item.feature == 'SoftSkillsRating' %}Crucial behavioral and interpersonal communication metric
+                            {% elif item.feature == 'CodingTestScore' %}Technical capability benchmark for developer roles
+                            {% elif item.feature == 'AttendancePercent' %}Discipline and regularity indicator
+                            {% else %}Analytical aptitude baseline
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Scaler Comparison & Model Properties -->
+    <section class="card">
+        <div class="card-heading">
+            <div>
+                <h2>Preprocessing Scaler Comparison &amp; Loss Formulation</h2>
+                <p>Validation results across different feature normalization techniques (Session 20-22 M2S4).</p>
+            </div>
+            <span class="status-pill">Session 20-22 Recap</span>
+        </div>
+
+        <div class="analysis-guide">
+            {% for sc in logistic_model_data.scaler_comparison %}
+            <div>
+                <span>{{ sc.scaler }}</span>
+                <strong>{{ sc.accuracy }}% Accuracy</strong>
+                <p>{{ sc.status }} for iterative gradient descent optimization.</p>
+            </div>
+            {% endfor %}
+            <div>
+                <span>Softmax 3-Class Model</span>
+                <strong>{{ logistic_model_data.softmax_acc }}% Accuracy</strong>
+                <p>Multinomial classification into Not Placed / Standard / Premium.</p>
+            </div>
+        </div>
+
+        <div class="methods-comparison-grid">
+            <div class="method-card">
+                <h3>The Sigmoid Activation Function</h3>
+                <p class="method-formula"><code>σ(z) = 1 / (1 + e⁻ᶻ)</code></p>
+                <ul>
+                    <li>Squashes any linear score z = θᵀx into a valid probability in (0, 1).</li>
+                    <li>Decision boundary occurs at z = 0 where σ(z) = 0.5 (50% threshold).</li>
+                </ul>
+            </div>
+
+            <div class="method-card">
+                <h3>Cross-Entropy Loss (Log Loss)</h3>
+                <p class="method-formula"><code>J(θ) = −(1/m) Σ [y·log(ŷ) + (1−y)·log(1−ŷ)]</code></p>
+                <ul>
+                    <li>Replaces MSE because MSE + Sigmoid produces non-convex cost surfaces.</li>
+                    <li>Convex with a single global minimum, harshly penalizing confident wrong predictions.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    function openFolder(targetId, shouldScroll) {
+        const panel = document.getElementById(targetId);
+        if (!panel) return;
+
+        // Close other panels and uncheck other folders
+        document.querySelectorAll(".topic-panel").forEach((p) => {
+            if (p.id !== targetId) p.hidden = true;
+        });
+
+        document.querySelectorAll(".folder-box").forEach((b) => {
+            const isMatch = b.dataset.target === targetId;
+            b.classList.toggle("folder-open", isMatch);
+            const btnText = b.querySelector(".btn-text");
+            if (btnText) {
+                const label = targetId.includes("linear") || targetId.includes("logistic") ? "Model" : "Data";
+                btnText.textContent = isMatch ? `Hide ${label}` : `Show ${label}`;
+            }
+        });
+
+        panel.hidden = false;
+
+        if (shouldScroll) {
+            setTimeout(() => {
+                panel.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 100);
+        }
+    }
+
+    function toggleFolder(box, e) {
+        if (e) e.stopPropagation();
+        const button = box.querySelector(".show-folder-btn");
+        const targetId = button ? button.dataset.target : box.dataset.target;
+        const panel = document.getElementById(targetId);
+        if (!panel) return;
+
+        const isCurrentlyOpen = !panel.hidden;
+
+        if (isCurrentlyOpen) {
+            panel.hidden = true;
+            box.classList.remove("folder-open");
+            const btnText = box.querySelector(".btn-text");
+            if (btnText) {
+                const label = targetId.includes("linear") || targetId.includes("logistic") ? "Model" : "Data";
+                btnText.textContent = `Show ${label}`;
+            }
+        } else {
+            openFolder(targetId, true);
+        }
+    }
+
+    document.querySelectorAll(".folder-box").forEach((box) => {
+        const button = box.querySelector(".show-folder-btn");
+        if (button) {
+            button.addEventListener("click", (e) => toggleFolder(box, e));
+        }
+        box.addEventListener("click", (e) => {
+            if (!e.target.closest(".folder-popup") && !e.target.closest(".show-folder-btn") && !e.target.closest("input") && !e.target.closest("button")) {
+                toggleFolder(box, e);
+            }
+        });
+    });
+
+    // Auto-open active folder from server context, URL hash, or query param
+    document.addEventListener("DOMContentLoaded", () => {
+        const serverActiveFolder = "{{ active_folder|default('') }}";
+        const urlParams = new URLSearchParams(window.location.search);
+        const queryFolder = urlParams.get("folder");
+        const hashFolder = window.location.hash.replace("#", "");
+
+        const targetFolder = serverActiveFolder || queryFolder || hashFolder;
+        if (targetFolder && document.getElementById(targetFolder)) {
+            openFolder(targetFolder, true);
+        }
+    });
+</script>
+{% endblock %}

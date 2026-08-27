@@ -1,0 +1,394 @@
+<!-- Split & Hyperparameter Summary Hero Card -->
+<section class="card hero-card" style="border-top-color: #4f46e5;">
+    <div class="card-heading">
+        <div>
+            <h2>Tuned Hyperparameters &amp; Generalization Summary</h2>
+            <p>Optimal regularisation penalties found via 5-fold cross-validation on <strong>{{ dataset_name }}</strong>.</p>
+        </div>
+        <span class="status-pill" style="background: #e0e7ff; color: #4338ca;">Session 19 Case Study</span>
+    </div>
+
+    <div class="dataset-info">
+        <div class="info-box" style="background: linear-gradient(145deg, #eef2ff, #fdf4ff);">
+            <h3 style="color: #4f46e5;">{{ reg_model_data.best_hyperparameters.ridge_alpha }}</h3>
+            <p>Best Ridge &alpha; (&lambda;)</p>
+        </div>
+        <div class="info-box" style="background: linear-gradient(145deg, #fef3c7, #fffbeb);">
+            <h3 style="color: #d97706;">{{ reg_model_data.best_hyperparameters.lasso_alpha }}</h3>
+            <p>Best Lasso &alpha; (&lambda;)</p>
+        </div>
+        <div class="info-box" style="background: linear-gradient(145deg, #ede9fe, #f5f3ff);">
+            <h3 style="color: #7c3aed;">&alpha;={{ reg_model_data.best_hyperparameters.elastic_alpha }}, L1={{ reg_model_data.best_hyperparameters.elastic_l1_ratio }}</h3>
+            <p>Best Elastic Net</p>
+        </div>
+        <div class="info-box" style="background: linear-gradient(145deg, #ecfdf5, #f0fdf4);">
+            <h3 style="color: #059669;">{{ reg_model_data.model_summaries['Ridge Regression (L2)'].r2_gap }}</h3>
+            <p>Generalization Gap (&Delta;R&sup2;)</p>
+        </div>
+    </div>
+</section>
+
+<!-- Continuous Salary Regression Comparison Table -->
+<section class="card">
+    <div class="card-heading">
+        <div>
+            <h2>Continuous Salary Regression: OLS vs Ridge vs Lasso vs Elastic Net</h2>
+            <p>Comparison of shrinkage penalties, coefficient sparsity, error metrics, and overfitting gaps across models.</p>
+        </div>
+        <span class="status-pill">Regression Benchmark</span>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Model</th>
+                    <th>Penalty Function &Omega;(w)</th>
+                    <th>Best Alpha (&lambda;)</th>
+                    <th>L1 Ratio (&alpha;)</th>
+                    <th>Train R&sup2;</th>
+                    <th>Test R&sup2;</th>
+                    <th>Test RMSE</th>
+                    <th>Zero Coefs</th>
+                    <th>Active Coefs</th>
+                    <th>Overfitting Gap (&Delta;R&sup2;)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in reg_model_data.comparison_table %}
+                <tr>
+                    <td><strong>{{ row.Model }}</strong></td>
+                    <td>
+                        {% if 'None' in row.Penalty %}
+                            <span class="penalty-pill penalty-none">{{ row.Penalty }}</span>
+                        {% elif 'L2' in row.Penalty and 'Blended' not in row.Penalty %}
+                            <span class="penalty-pill penalty-l2">{{ row.Penalty }}</span>
+                        {% elif 'L1' in row.Penalty and 'Blended' not in row.Penalty %}
+                            <span class="penalty-pill penalty-l1">{{ row.Penalty }}</span>
+                        {% else %}
+                            <span class="penalty-pill penalty-en">{{ row.Penalty }}</span>
+                        {% endif %}
+                    </td>
+                    <td><code>{{ row['Best Alpha (lambda)'] }}</code></td>
+                    <td><code>{{ row['L1 Ratio (alpha)'] }}</code></td>
+                    <td>{{ row['Train R2'] }}</td>
+                    <td><strong style="color: #0b8276;">{{ row['Test R2'] }}</strong></td>
+                    <td><strong>{{ row['Test RMSE'] }}</strong></td>
+                    <td>
+                        {% if row['Zero Coefs'] > 0 %}
+                            <span class="sparsity-tag sparsity-zero">&oslash; {{ row['Zero Coefs'] }} Dropped</span>
+                        {% else %}
+                            <span class="sparsity-tag" style="background:#f1f5f9;color:#64748b;">0 (All Kept)</span>
+                        {% endif %}
+                    </td>
+                    <td><span class="sparsity-tag sparsity-active">&check; {{ row['Active Coefs'] }} Active</span></td>
+                    <td><code>{{ row['Overfitting Gap (Delta R2)'] }}</code></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Binary Placement Classification Comparison Table -->
+<section class="card">
+    <div class="card-heading">
+        <div>
+            <h2>Binary Placement Classification: Unregularized vs L2 vs L1 vs Elastic Net</h2>
+            <p>Penalized cross-entropy log loss models for binary placement outcome (Placed / Not Placed).</p>
+        </div>
+        <span class="status-pill">Classification Benchmark</span>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Model</th>
+                    <th>Penalty Function</th>
+                    <th>C (1/&lambda;)</th>
+                    <th>L1 Ratio</th>
+                    <th>Test Accuracy</th>
+                    <th>ROC-AUC</th>
+                    <th>Log-Loss</th>
+                    <th>F1-Score</th>
+                    <th>Active Features</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in clf_model_data.comparison_table %}
+                <tr>
+                    <td><strong>{{ row.Model }}</strong></td>
+                    <td>
+                        {% if 'None' in row.Penalty %}
+                            <span class="penalty-pill penalty-none">{{ row.Penalty }}</span>
+                        {% elif 'L2' in row.Penalty %}
+                            <span class="penalty-pill penalty-l2">{{ row.Penalty }}</span>
+                        {% elif 'L1' in row.Penalty %}
+                            <span class="penalty-pill penalty-l1">{{ row.Penalty }}</span>
+                        {% else %}
+                            <span class="penalty-pill penalty-en">{{ row.Penalty }}</span>
+                        {% endif %}
+                    </td>
+                    <td><code>{{ row['C (1/lambda)'] }}</code></td>
+                    <td><code>{{ row['L1 Ratio'] }}</code></td>
+                    <td><strong style="color: #0b8276;">{{ row['Test Accuracy'] }}</strong></td>
+                    <td><strong>{{ row['ROC-AUC'] }}</strong></td>
+                    <td><code>{{ row['Log-Loss'] }}</code></td>
+                    <td>{{ row['F1-Score'] }}</td>
+                    <td><span class="sparsity-tag sparsity-active">{{ row['Active Coefs'] }} Features</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Interactive Live Regularized Inference -->
+<section class="card">
+    <div class="card-heading">
+        <div>
+            <h2>Interactive Regularized Model Prediction</h2>
+            <p>Select a regularized model algorithm and input student scores to compare predicted salary and placement odds.</p>
+        </div>
+        <span class="status-pill" style="background:#ede9fe; color:#6d28d9;">Live Inference</span>
+    </div>
+
+    <form class="prediction-form" method="POST" action="">
+        <input type="hidden" name="model_type" value="regularization">
+        <input type="hidden" name="active_folder" value="regularization-output">
+
+        <!-- Model Selection Pills -->
+        <label style="display:block; margin-bottom: 8px; font-weight: 800; font-size: 0.85rem; color: #334155;">CHOOSE REGULARIZATION ALGORITHM:</label>
+        <div class="reg-model-selector">
+            <div class="reg-model-option">
+                <input type="radio" id="reg_ridge" name="reg_model" value="ridge" {% if chosen_reg_model == 'ridge' %}checked{% endif %} onchange="this.form.submit()">
+                <label for="reg_ridge">&bull; Ridge Regression (L2)</label>
+            </div>
+            <div class="reg-model-option">
+                <input type="radio" id="reg_lasso" name="reg_model" value="lasso" {% if chosen_reg_model == 'lasso' %}checked{% endif %} onchange="this.form.submit()">
+                <label for="reg_lasso">&bull; Lasso Regression (L1)</label>
+            </div>
+            <div class="reg-model-option">
+                <input type="radio" id="reg_en" name="reg_model" value="elasticnet" {% if chosen_reg_model == 'elasticnet' %}checked{% endif %} onchange="this.form.submit()">
+                <label for="reg_en">&bull; Elastic Net (L1 + L2)</label>
+            </div>
+            <div class="reg-model-option">
+                <input type="radio" id="reg_ols" name="reg_model" value="ols" {% if chosen_reg_model == 'ols' %}checked{% endif %} onchange="this.form.submit()">
+                <label for="reg_ols">&bull; OLS Baseline</label>
+            </div>
+        </div>
+
+        <div class="prediction-container">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="reg_cgpa">CGPA (4.0 - 10.0):</label>
+                    <input type="number" id="reg_cgpa" name="cgpa" step="0.01" min="4.0" max="10.0" value="{{ reg_inputs.CGPA }}" required>
+                    <span class="form-hint">Cumulative Grade Point Average</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg_coding">Coding Test Score (0 - 100):</label>
+                    <input type="number" id="reg_coding" name="coding_score" step="0.1" min="0" max="100" value="{{ reg_inputs.CodingTestScore }}" required>
+                    <span class="form-hint">Technical assessment score</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg_interview">Mock Interview Score (0 - 100):</label>
+                    <input type="number" id="reg_interview" name="interview_score" step="0.1" min="0" max="100" value="{{ reg_inputs.MockInterviewScore }}" required>
+                    <span class="form-hint">Interview performance rating</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg_aptitude">Aptitude Test Score (0 - 100):</label>
+                    <input type="number" id="reg_aptitude" name="aptitude_score" step="0.1" min="0" max="100" value="{{ reg_inputs.AptitudeTestScore }}" required>
+                    <span class="form-hint">Analytical aptitude score</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg_attendance">Attendance (%):</label>
+                    <input type="number" id="reg_attendance" name="attendance" step="0.1" min="50" max="100" value="{{ reg_inputs.AttendancePercent }}" required>
+                    <span class="form-hint">Academic class attendance percentage</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg_softskills">Soft Skills Rating (1 - 5):</label>
+                    <input type="number" id="reg_softskills" name="softskills" step="0.1" min="1" max="5" value="{{ reg_inputs.SoftSkillsRating }}" required>
+                    <span class="form-hint">Communication and team appraisal</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg_internships">Internships Completed:</label>
+                    <input type="number" id="reg_internships" name="internships" step="1" min="0" max="10" value="{{ reg_inputs.Internships }}" required>
+                    <span class="form-hint">Number of industry internships</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg_projects">Academic Projects:</label>
+                    <input type="number" id="reg_projects" name="projects" step="1" min="0" max="20" value="{{ reg_inputs.Projects }}" required>
+                    <span class="form-hint">Major &amp; minor technical projects</span>
+                </div>
+            </div>
+
+            <!-- Prediction Results Column -->
+            <div>
+                <div class="prediction-result-card" style="margin-bottom: 16px;">
+                    <p class="result-label">REGULARIZED SALARY PREDICTION ({{ regularized_salary_pred.model_used }})</p>
+                    <div class="result-badge">
+                        <span class="result-value">{{ regularized_salary_pred.predicted_salary }}</span>
+                        <span class="result-unit">LPA</span>
+                    </div>
+                    <p class="result-note">Placement Status Probability: <strong>{{ regularized_placement_pred.prob_placed }}%</strong> ({{ regularized_placement_pred.placement_status }})</p>
+
+                    <div class="result-breakdown">
+                        <h4>Feature Weights &amp; Sparsity Status:</h4>
+                        <ul>
+                            {% for item in regularized_salary_pred.feature_breakdown %}
+                            <li>
+                                <span>{{ item.feature }} ({{ item.input_value }})</span>
+                                {% if item.is_active %}
+                                    <strong style="color: #0b8276;">Weight: {{ item.standardized_weight }}</strong>
+                                {% else %}
+                                    <strong style="color: #b91c1c; text-decoration: line-through;">0.0000 (Zeroed by L1)</strong>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions" style="margin-top: 15px;">
+            <button type="submit" class="predict-submit-btn" style="background: #4f46e5;">Recalculate with {{ chosen_reg_model|upper }} Model</button>
+        </div>
+    </form>
+</section>
+
+<!-- Automatic Feature Selection (Lasso & Elastic Net) -->
+<section class="card">
+    <div class="card-heading">
+        <div>
+            <h2>Automatic Feature Selection via L1 Sparsity (Lasso &amp; Elastic Net)</h2>
+            <p>Demonstration of how the L1 diamond geometry soft-thresholds uninformative predictor weights to exact zero.</p>
+        </div>
+        <span class="status-pill" style="background:#fef3c7; color:#b45309;">L1 Sparsity Audit</span>
+    </div>
+
+    <div style="margin-bottom: 16px;">
+        <h3 style="margin: 0 0 6px; font-size: 0.95rem;">Lasso (L1) Feature Selection (Best &lambda; = {{ lasso_feature_info.best_alpha }}):</h3>
+        <p style="margin: 0 0 8px; font-size: 0.82rem; color: #64748b;">
+            Retained <strong>{{ lasso_feature_info.selected_features|length }} active features</strong>, dropped <strong>{{ lasso_feature_info.dropped_features|length }} irrelevant features</strong>:
+        </p>
+        <div class="feature-pill-list">
+            {% for feat in lasso_feature_info.selected_features %}
+                <span class="feature-pill-active">&check; {{ feat }} (w = {{ lasso_feature_info.coef_map[feat]|round(4) }})</span>
+            {% endfor %}
+            {% for feat in lasso_feature_info.dropped_features %}
+                <span class="feature-pill-dropped">&oslash; {{ feat }} (w = 0.0000)</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div>
+        <h3 style="margin: 16px 0 6px; font-size: 0.95rem;">Elastic Net Group Selection (L1 Ratio = {{ elastic_feature_info.l1_ratio }}):</h3>
+        <div class="feature-pill-list">
+            {% for feat in elastic_feature_info.selected_features %}
+                <span class="feature-pill-active" style="background:#ede9fe; border-color:#c4b5fd; color:#6d28d9;">&check; {{ feat }} (w = {{ elastic_feature_info.coef_map[feat]|round(4) }})</span>
+            {% endfor %}
+            {% for feat in elastic_feature_info.dropped_features %}
+                <span class="feature-pill-dropped">&oslash; {{ feat }} (w = 0.0000)</span>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Visual Diagrams Grid -->
+<section class="card">
+    <div class="card-heading">
+        <div>
+            <h2>Session 19 Visual Analysis &amp; Overfitting Diagnostic Charts</h2>
+            <p>Dynamically generated plots illustrating shrinkage paths, model comparisons, learning curves, and polynomial overfitting.</p>
+        </div>
+        <span class="status-pill">4 Visual Figures</span>
+    </div>
+
+    <div class="chart-grid" style="margin-top: 18px;">
+        <!-- Diagram 1: Regularization Paths -->
+        <article class="card chart-card">
+            <h2>1. Ridge vs Lasso Regularization Paths</h2>
+            <p>Coefficient shrinkage behavior as regularisation parameter &alpha; (&lambda;) increases on log-scale.</p>
+            <img src="{{ url_for('serve_plot', filename=reg_diagrams.plot_coef_paths) }}" alt="Regularization Paths" loading="lazy">
+        </article>
+
+        <!-- Diagram 2: Model Comparison -->
+        <article class="card chart-card">
+            <h2>2. Model Performance &amp; Sparsity Comparison</h2>
+            <p>Test R&sup2;, Test RMSE, and active non-zero feature counts across OLS, Ridge, Lasso, and Elastic Net.</p>
+            <img src="{{ url_for('serve_plot', filename=reg_diagrams.plot_model_comparison) }}" alt="Model Comparison" loading="lazy">
+        </article>
+
+        <!-- Diagram 3: Learning Curves -->
+        <article class="card chart-card">
+            <h2>3. Learning Curves (Bias-Variance &amp; Overfitting)</h2>
+            <p>Training vs Cross-Validation R&sup2; score across training sample sizes, verifying low generalization error.</p>
+            <img src="{{ url_for('serve_plot', filename=reg_diagrams.plot_learning_curves) }}" alt="Learning Curves" loading="lazy">
+        </article>
+
+        <!-- Diagram 4: Polynomial Curve Fitting Analogy -->
+        <article class="card chart-card">
+            <h2>4. Polynomial Overfitting Analogy (Slide 10)</h2>
+            <p>Underfit (Degree 1) vs Balanced (Degree 4) vs Overfit (Degree 15) vs Cured with Ridge Regularization.</p>
+            <img src="{{ url_for('serve_plot', filename=reg_diagrams.plot_poly_overfitting) }}" alt="Polynomial Overfitting Analogy" loading="lazy">
+        </article>
+    </div>
+</section>
+
+<!-- Mathematical Principles & Formulas Reference -->
+<section class="card">
+    <div class="card-heading">
+        <div>
+            <h2>Mathematical Formulations &amp; Geometric Intuition</h2>
+            <p>Key theoretical derivations from Module 2 Session 19.</p>
+        </div>
+        <span class="status-pill">Theory Reference</span>
+    </div>
+
+    <div class="methods-comparison-grid">
+        <div class="method-card">
+            <h3>Ridge Regression (L2 Penalty)</h3>
+            <p class="method-formula"><code>J(w) = ||Xw - y||&sup2; + &lambda;||w||&sup2;&sub2;  &longrightarrow;  ŵ = (XᵀX + &lambda;I)&oline;&sup1;Xᵀy</code></p>
+            <ul>
+                <li><strong>Multicollinearity Fix:</strong> Adding &lambda;I guarantees XᵀX + &lambda;I is always non-singular and invertible.</li>
+                <li><strong>Smooth Constraint Ball:</strong> Shrinks all weights proportionally; none become exactly zero.</li>
+            </ul>
+        </div>
+
+        <div class="method-card">
+            <h3>Lasso Regression (L1 Penalty)</h3>
+            <p class="method-formula"><code>J(w) = ||Xw - y||&sup2; + &lambda;||w||&sub1;  &longrightarrow;  ŵⱼ = sign(w̃ⱼ)&middot;max(|w̃ⱼ| - &lambda;/2, 0)</code></p>
+            <ul>
+                <li><strong>Diamond Geometry:</strong> Loss contours touch diamond corners on axes, setting irrelevant weights to exact 0.</li>
+                <li><strong>Automatic Feature Selection:</strong> Soft-thresholding operator eliminates noisy predictors.</li>
+            </ul>
+        </div>
+
+        <div class="method-card">
+            <h3>Elastic Net (L1 + L2 Blended)</h3>
+            <p class="method-formula"><code>J(w) = ||Xw - y||&sup2; + &lambda;[ &alpha;||w||&sub1; + (1-&alpha;)||w||&sup2;&sub2; ]</code></p>
+            <ul>
+                <li><strong>Group Sparsity:</strong> Correlated feature clusters are selected or dropped together.</li>
+                <li><strong>Tunable Mixing Ratio:</strong> &alpha; = 1 (Pure Lasso), &alpha; = 0 (Pure Ridge), 0 &lt; &alpha; &lt; 1 (Blended).</li>
+            </ul>
+        </div>
+
+        <div class="method-card">
+            <h3>Bias-Variance Trade-off</h3>
+            <p class="method-formula"><code>E[(y - ŷ)&sup2;] = Bias&sup2;(ŷ) + Var(ŷ) + &sigma;&sup2;_&epsilon;</code></p>
+            <ul>
+                <li><strong>Overfitting (High Variance):</strong> Memorizes noise; large train-validation gap.</li>
+                <li><strong>Regularization Remedy:</strong> Slightly increases bias while drastically reducing variance for optimal generalization.</li>
+            </ul>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Placement Prediction Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div>
+            <p class="eyebrow">DATA EXPLORER</p>
+            <h1>Placement Prediction Dashboard</h1>
+            <p>Explore placement data, quality checks, and patterns that matter.</p>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <p class="sidebar-label">WORKSPACE</p>
+            <h2>Analysis menu</h2>
+
+            <a class="menu-btn" href="{{ url_for('load_page') }}">Load Data</a>
+            <a class="menu-btn" href="{{ url_for('eda_page') }}">EDA Dashboard</a>
+            <a class="menu-btn" href="{{ url_for('feature_engg_page') }}">Feature Engg</a>
+            <a class="menu-btn" href="{{ url_for('decision_tree_page') }}">Decision Tree</a>
+        </aside>
+
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>Machine Learning Dashboard | Flask Application</p>
+    </footer>
+</body>
+</html>
