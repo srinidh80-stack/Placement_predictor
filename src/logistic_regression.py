@@ -1,6 +1,10 @@
-"""Logistic Regression model training, evaluation, diagrams, and live placement prediction (Module 2 Sessions 20-22 / Session 09)."""
-
 from pathlib import Path
+import sys
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -16,6 +20,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 import config
 from src.data_utils import clean_data, load_cleaned
+
 
 LOGISTIC_NUMERIC_FEATURES = [
     "SGPA_Sem1", "SGPA_Sem2", "SGPA_Sem3", "SGPA_Sem4",
@@ -212,21 +217,19 @@ def predict_placement_status(inputs_dict, model_data=None):
 
 
 def generate_logistic_diagrams(df=None, model_data=None, current_prediction=None):
-    """Generate S-curve, Decision Boundary, and Confusion Matrix plots."""
+    """Generate empirical S-curve and sigmoid fit diagram."""
     config.PLOTS_DIR.mkdir(parents=True, exist_ok=True)
     
     if model_data is None:
         model_data = train_logistic_regression(df)
         
-    X_val = model_data["X_val"]
-    y_val = model_data["y_val"]
     X_train = model_data["X_train"]
     y_train = model_data["y_train"]
     
     sns.set_theme(style="whitegrid")
     
     # -------------------------------------------------------------
-    # DIAGRAM 1: Empirical CGPA vs Placement S-Curve
+    # DIAGRAM: Empirical CGPA vs Placement S-Curve & Sigmoid
     # -------------------------------------------------------------
     fig, ax = plt.subplots(figsize=(8.5, 4.8), dpi=120)
     
@@ -244,7 +247,6 @@ def generate_logistic_diagrams(df=None, model_data=None, current_prediction=None
     
     ax.plot(cgpa_dense, sigmoid_dense, color="#f05f4f", linewidth=2.5, linestyle="--", label="Fitted Sigmoid σ(z)")
     ax.axhline(0.5, color="#6f7f7a", linestyle=":", alpha=0.8, label="50% Probability Threshold")
-    ax.axvline(x=7.5, color="#f5b84b", linestyle=":", alpha=0.8, label="Decision Boundary (~7.5 CGPA)")
     
     if current_prediction and "CGPA" in current_prediction["inputs"]:
         input_cgpa = float(current_prediction["inputs"]["CGPA"])
@@ -261,51 +263,6 @@ def generate_logistic_diagrams(df=None, model_data=None, current_prediction=None
     fig.savefig(plot1_path, bbox_inches="tight", dpi=120)
     plt.close(fig)
     
-    # -------------------------------------------------------------
-    # DIAGRAM 2: 2D Decision Boundary (CGPA vs Coding Test Score)
-    # -------------------------------------------------------------
-    fig, ax = plt.subplots(figsize=(8.5, 4.8), dpi=120)
-    
-    boundary_clf = LogisticRegression(max_iter=1000, random_state=42)
-    boundary_clf.fit(X_train[["CGPA", "CodingTestScore"]].to_numpy(), y_train)
-    
-    x_min, x_max = X_train["CGPA"].min() - 0.3, X_train["CGPA"].max() + 0.3
-    y_min, y_max = X_train["CodingTestScore"].min() - 5, X_train["CodingTestScore"].max() + 5
-    xx, yy = np.meshgrid(np.linspace(x_min, x_max, 150), np.linspace(y_min, y_max, 150))
-    grid_preds = boundary_clf.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1].reshape(xx.shape)
-    
-    # Contour fill
-    contour = ax.contourf(xx, yy, grid_preds, levels=np.linspace(0, 1, 11), cmap="YlGnBu", alpha=0.45)
-    cbar = plt.colorbar(contour, ax=ax)
-    cbar.set_label("Placement Probability", fontsize=8.5)
-    
-    # Decision boundary line where prob = 0.5
-    ax.contour(xx, yy, grid_preds, levels=[0.5], colors=["#d84f40"], linewidths=2.5, linestyles=["-"])
-    
-    # Subsample validation points
-    sample_idx = np.random.choice(len(y_val), size=min(800, len(y_val)), replace=False)
-    sub_cgpa = X_val["CGPA"].iloc[sample_idx]
-    sub_coding = X_val["CodingTestScore"].iloc[sample_idx]
-    sub_y = y_val.iloc[sample_idx]
-    
-    ax.scatter(sub_cgpa[sub_y == 1], sub_coding[sub_y == 1], alpha=0.4, color="#0b8276", s=16, label="Placed (Actual)")
-    ax.scatter(sub_cgpa[sub_y == 0], sub_coding[sub_y == 0], alpha=0.4, color="#e056fd", s=16, label="Not Placed (Actual)")
-    
-    if current_prediction and "CGPA" in current_prediction["inputs"] and "CodingTestScore" in current_prediction["inputs"]:
-        c_cgpa = float(current_prediction["inputs"]["CGPA"])
-        c_coding = float(current_prediction["inputs"]["CodingTestScore"])
-        ax.scatter([c_cgpa], [c_coding], color="#f5b84b", s=150, edgecolor="#21312f", linewidth=2.2, zorder=10, label="Current Candidate")
-    
-    ax.set_title("Decision Boundary (CGPA vs Coding Test Score)", fontsize=11, weight="bold", color="#21312f", pad=12)
-    ax.set_xlabel("CGPA", fontsize=9.5, weight="bold", color="#21312f")
-    ax.set_ylabel("Coding Test Score", fontsize=9.5, weight="bold", color="#21312f")
-    ax.legend(frameon=True, loc="lower right", fontsize=8)
-    plt.tight_layout()
-    plot2_path = config.PLOTS_DIR / "logistic_decision_boundary.png"
-    fig.savefig(plot2_path, bbox_inches="tight", dpi=120)
-    plt.close(fig)
-    
     return {
-        "plot_s_curve": "plots/logistic_s_curve.png",
-        "plot_decision_boundary": "plots/logistic_decision_boundary.png"
+        "plot_s_curve": "logistic_s_curve.png"
     }

@@ -43,7 +43,7 @@ ORDINAL_CATEGORY_ORDERS = {
 
 FEATURE_ENGINEERING_CONCEPTS = [
     ("Min-Max Scaling", "x' = (x - x_min) / (x_max - x_min); keeps values in a fixed range."),
-    ("Standard Scaling", "z = (x - mean) / std; centers features around zero."),
+    ("Standard Scaling", "z = (x - mean) / std; centers features around zero (essential before Ridge/Lasso)."),
     ("Robust Scaling", "x' = (x - median) / IQR; reduces the effect of strong outliers."),
     ("One-Hot Encoding", "Creates one binary column per category for nominal, low-cardinality features."),
     ("Ordinal Encoding", "Uses integer ranks only when the category has a real order."),
@@ -54,6 +54,18 @@ FEATURE_ENGINEERING_CONCEPTS = [
     (
         "Embedding-Based Encoding",
         "Learns a dense vector per category inside a neural network; useful for very high cardinality.",
+    ),
+    (
+        "Ridge (L2) Shrinkage",
+        "Adds lambda*||w||_2^2 penalty to shrink coefficients proportionally and eliminate multicollinearity.",
+    ),
+    (
+        "Lasso (L1) Feature Selection",
+        "Adds lambda*||w||_1 penalty; diamond geometry sets irrelevant coefficients to exact 0.",
+    ),
+    (
+        "Elastic Net Group Sparsity",
+        "Blends L1 + L2 penalties; encourages correlated feature groups to be selected/dropped together.",
     ),
 ]
 
@@ -488,6 +500,36 @@ def build_encoded_splits(method="one_hot", df=None, columns=None, test_size=0.2,
         raise ValueError(f"Unknown encoding method: {method}. Choose from {list(encoders)}")
 
     return encoders[method](train_df, test_df, columns, **kwargs)
+
+
+def fit_lasso_feature_selector(train_df, target_col="PlacementStatus", columns=None, alpha=0.01):
+    """Learn sparse active features using Lasso (L1) regularization on training data."""
+    from src.regularization import select_features_with_lasso
+    cols = scaling_columns(train_df, columns)
+    lasso_res = select_features_with_lasso(train_df[cols + [target_col]], target_col=target_col, alpha=alpha)
+    return {
+        "method": "lasso_l1_feature_selection",
+        "selected_features": [c for c in cols if c in lasso_res["selected_features"]],
+        "dropped_features": [c for c in cols if c in lasso_res["dropped_features"]],
+        "coef_map": lasso_res["coef_map"],
+        "alpha": lasso_res["best_alpha"],
+    }
+
+
+def transform_feature_selection(df, selector):
+    """Filter DataFrame to only the regularized active features selected during training."""
+    output = df.copy()
+    available_selected = [c for c in selector["selected_features"] if c in output.columns]
+    other_cols = [c for c in output.columns if c not in selector["selected_features"] and c not in selector["dropped_features"]]
+    return output[available_selected + other_cols]
+
+
+def lasso_feature_selection(train_df, test_df=None, target_col="PlacementStatus", columns=None, alpha=0.01):
+    """Fit Lasso feature selector on training split only and filter train/test sets."""
+    selector = fit_lasso_feature_selector(train_df, target_col, columns, alpha)
+    train_filtered = transform_feature_selection(train_df, selector)
+    test_filtered = transform_feature_selection(test_df, selector) if test_df is not None else None
+    return train_filtered, test_filtered, selector
 
 
 if __name__ == "__main__":

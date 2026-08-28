@@ -1,6 +1,10 @@
-"""Linear regression model training, evaluation, plot generation, and salary package prediction (Module 2 Sessions 17-18)."""
-
 from pathlib import Path
+import sys
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -13,6 +17,7 @@ from sklearn.model_selection import train_test_split
 
 import config
 from src.data_utils import clean_data, load_cleaned
+
 
 REGRESSION_FEATURES = ["CGPA", "CodingTestScore", "MockInterviewScore", "AptitudeTestScore"]
 TARGET_COL = "Salary Package"
@@ -265,6 +270,6 @@ def generate_regression_diagrams(df=None, model_data=None, current_prediction=No
     plt.close(fig)
     
     return {
-        "plot_line_fit": "plots/regression_line_fit.png",
-        "plot_actual_vs_pred": "plots/regression_actual_vs_predicted.png"
+        "plot_line_fit": "regression_line_fit.png",
+        "plot_actual_vs_pred": "regression_actual_vs_predicted.png"
     }
