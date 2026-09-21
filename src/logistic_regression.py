@@ -124,6 +124,7 @@ def train_logistic_regression(df=None, test_size=0.2, random_state=42):
     placed_pct = float((y_train == 1).mean() * 100)
     
     return {
+        "model": binary_model,
         "binary_model": binary_model,
         "softmax_model": softmax_model,
         "scaler": scaler,
@@ -263,6 +264,105 @@ def generate_logistic_diagrams(df=None, model_data=None, current_prediction=None
     fig.savefig(plot1_path, bbox_inches="tight", dpi=120)
     plt.close(fig)
     
+    # -------------------------------------------------------------
+    # DIAGRAM 2: Top Coefficients / Feature Impact Bar Chart
+    # -------------------------------------------------------------
+    coef_info = get_model_coefficients_and_odds_ratios(model_data=model_data)
+    top15 = coef_info["table"].head(15).iloc[::-1]  # Reverse for horizontal bar chart
+    
+    fig, ax = plt.subplots(figsize=(8.5, 6.0), dpi=120)
+    colors = ["#0f9f8f" if c > 0 else "#e05242" for c in top15["coefficient"]]
+    ax.barh(top15["feature"], top15["coefficient"], color=colors, edgecolor="#21312f", linewidth=0.8, alpha=0.85)
+    ax.axvline(0, color="#6f7f7a", linewidth=1.2, linestyle="--")
+    ax.set_title("Top Features Driving Placement Probability (Standardized Logistic Regression)", fontsize=11, weight="bold", color="#21312f", pad=12)
+    ax.set_xlabel("Standardized Coefficient (Positive = Increases Placement Odds, Negative = Decreases)", fontsize=9, weight="bold", color="#21312f")
+    ax.set_ylabel("Feature", fontsize=9, weight="bold", color="#21312f")
+    plt.tight_layout()
+    plot2_path = config.PLOTS_DIR / "top_coefficients.png"
+    fig.savefig(plot2_path, bbox_inches="tight", dpi=120)
+    plt.close(fig)
+    
     return {
-        "plot_s_curve": "logistic_s_curve.png"
+        "plot_s_curve": "logistic_s_curve.png",
+        "plot_top_coefficients": "top_coefficients.png"
     }
+
+
+def get_model_coefficients_and_odds_ratios(model_data=None, df=None):
+    """Compute standardized coefficients, Odds Ratios (exp(beta)), and multicollinearity diagnostics."""
+    if model_data is None:
+        model_data = train_logistic_regression(df)
+        
+    model = model_data.get("binary_model") or model_data.get("model")
+    features = model_data["features"]
+    
+    coefs = model.coef_[0]
+    odds_ratios = np.exp(coefs)
+    
+    table = pd.DataFrame({
+        "feature": features,
+        "coefficient": np.round(coefs, 3),
+        "odds_ratio": np.round(odds_ratios, 3),
+        "abs_impact": np.abs(coefs),
+        "impact_direction": ["Increases Odds" if c > 0 else "Decreases Odds" for c in coefs],
+    }).sort_values("abs_impact", ascending=False)
+    
+    # Multicollinearity Check: Check SGPA vs CGPA correlation
+    X_train = model_data["X_train"]
+    sgpa_cols = [c for c in features if c.startswith("SGPA_Sem")]
+    avg_corr = 0.0
+    if "CGPA" in X_train.columns and len(sgpa_cols) > 0:
+        corr_series = X_train[["CGPA"] + sgpa_cols].corr()["CGPA"].drop("CGPA", errors="ignore")
+        avg_corr = round(float(corr_series.mean()), 3)
+        
+    multicollinearity_note = {
+        "average_cgpa_sgpa_correlation": avg_corr,
+        "is_multicollinear": avg_corr > 0.7,
+        "explanation": (
+            f"CGPA correlates strongly ({avg_corr}) with the 8 SGPA semester columns. "
+            "Because they represent nearly identical information, multicollinearity can cause individual "
+            "coefficients to split or reverse sign (e.g. CGPA appearing slightly negative), even when overall accuracy is high."
+        ) if avg_corr > 0.7 else "No severe multicollinearity detected between core academic indicators."
+    }
+    
+    return {
+        "table": table,
+        "top_features": table.head(10).to_dict(orient="records"),
+        "multicollinearity_note": multicollinearity_note
+    }
+
+
+def save_coefficients_report(model_data=None, df=None):
+    """Save Logistic Regression Odds Ratios and coefficients report to Output/Report/coefficients_report.txt."""
+    config.REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    info = get_model_coefficients_and_odds_ratios(model_data=model_data, df=df)
+    rep_path = config.REPORTS_DIR / "coefficients_report.txt"
+    
+    with open(rep_path, "w") as f:
+        f.write("LOGISTIC REGRESSION COEFFICIENTS & ODDS RATIOS REPORT (50,000 RECORDS)\n")
+        f.write("=" * 70 + "\n")
+        f.write("Standardized Coefficients & Multiplicative Odds Ratios:\n")
+        f.write(f"{'Feature':<22} {'Coefficient':<14} {'Odds Ratio':<12} {'Direction'}\n")
+        f.write("-" * 70 + "\n")
+        for _, row in info["table"].head(15).iterrows():
+            f.write(f"{row['feature']:<22} {row['coefficient']:>10.3f}   x{row['odds_ratio']:<10.3f}  {row['impact_direction']}\n")
+            
+        f.write("\nMulticollinearity Diagnostic:\n")
+        f.write(f"  {info['multicollinearity_note']['explanation']}\n")
+        f.write(f"\nGenerated Plot: top_coefficients.png\n")
+        
+    return str(rep_path)
+
+
+if __name__ == "__main__":
+    print("=" * 70)
+    print("  LOGISTIC REGRESSION & COEFFICIENT INTERPRETATION")
+    print("=" * 70)
+    df = load_cleaned()
+    m_data = train_logistic_regression(df=df)
+    print(f"Validation Accuracy: {m_data['metrics']['accuracy']}% | ROC-AUC: {m_data['metrics']['auc']}")
+    diagrams = generate_logistic_diagrams(model_data=m_data)
+    rep = save_coefficients_report(model_data=m_data)
+    print(f"Report saved to: {rep}")
+    print("=" * 70)
+

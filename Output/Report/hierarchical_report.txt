@@ -1,0 +1,40 @@
+======================================================================
+MODULE 4 Â· SESSION 24: HIERARCHICAL CLUSTERING REPORT
+Course: Machine Learning (25SC2107E) | Placement Prediction Dataset
+======================================================================
+
+Subsample Size: 2,500 students from 50,000 total records
+Features: 10 standardized numeric metrics
+
+COPHENETIC CORRELATION COEFFICIENTS BY LINKAGE METHOD:
+(Measures how faithfully tree merge heights preserve original Euclidean distances)
+  - Ward        : 0.6960
+  - Complete    : 0.6962
+  - Average     : 0.7240
+  - Single      : 0.6025
+
+SINGLE LINKAGE CHAINING VS WARD BALANCE (cut at K=4):
+  - Single Linkage Cluster Sizes : {1: 2, 2: 2496, 3: 1, 4: 1}
+    (Notice one massive cluster and isolated singleton outliers - the classic chaining problem)
+  - Ward Linkage Cluster Sizes   : {1: 38, 2: 871, 3: 1082, 4: 509}
+    (Notice balanced, well-distributed partition sizes)
+
+WARD TREE SILHOUETTE SCORES ACROSS CUT HEIGHTS:
+ K  Silhouette
+ 2      0.3817
+ 3      0.3504
+ 4      0.3588
+ 5      0.3658
+ 6      0.2801
+ 7      0.1726
+ 8      0.1561
+  Optimal Ward K: 2 (Silhouette = 0.3817)
+
+CROSS-ALGORITHM VALIDATION (Hierarchical Ward vs K-Means):
+  Adjusted Rand Index (ARI) at K=2: 0.9618
+  Interpretation: Both independent unsupervised algorithms agree strongly on
+  the underlying student grouping without receiving any ground-truth labels.
+
+PLACEMENT RATES BY HIERARCHICAL CLUSTER:
+  - Cluster 1: 97.2%
+  - Cluster 2: 47.5%

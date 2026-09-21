@@ -1,0 +1,10 @@
+BIAS-VARIANCE TRADEOFF REPORT (50,000 PLACEMENT RECORDS)
+============================================================
+Optimal Tree Depth: 8
+Best Validation Accuracy: 90.31%
+Underfitting (Depth 1):
+  Train Error: 15.78%, Val Error: 16.18% (High Bias)
+Overfitting (Depth 18):
+  Train Error: 1.97%, Val Error: 12.25%
+  Generalization Gap: 10.28% (High Variance)
+Diagnostic Plot: bias_variance_curve.png

@@ -269,7 +269,24 @@ def generate_regression_diagrams(df=None, model_data=None, current_prediction=No
     fig.savefig(plot2_path, bbox_inches="tight", dpi=120)
     plt.close(fig)
     
+    # -------------------------------------------------------------
+    # DIAGRAM 3: Residual Diagnostics Plot (Residuals vs Predicted)
+    # -------------------------------------------------------------
+    fig, ax = plt.subplots(figsize=(8.5, 4.5), dpi=120)
+    residuals = y_test.iloc[sample_idx] - y_pred[sample_idx]
+    ax.scatter(y_pred[sample_idx], residuals, alpha=0.35, color="#2f6288", s=18, label="Residuals ($y - \\hat{y}$)")
+    ax.axhline(0, color="#d84f40", linestyle="--", linewidth=1.8, label="Zero Error Line")
+    ax.set_title("Residual Diagnostics (Residuals vs Predicted Salary Package)", fontsize=11, weight="bold", color="#21312f", pad=12)
+    ax.set_xlabel("Predicted Salary Package (LPA)", fontsize=9.5, weight="bold", color="#21312f")
+    ax.set_ylabel("Residual Error (Actual - Predicted)", fontsize=9.5, weight="bold", color="#21312f")
+    ax.legend(frameon=True, loc="upper right", fontsize=8.5)
+    plt.tight_layout()
+    plot3_path = config.PLOTS_DIR / "regression_residuals.png"
+    fig.savefig(plot3_path, bbox_inches="tight", dpi=120)
+    plt.close(fig)
+    
     return {
         "plot_line_fit": "regression_line_fit.png",
-        "plot_actual_vs_pred": "regression_actual_vs_predicted.png"
+        "plot_actual_vs_pred": "regression_actual_vs_predicted.png",
+        "plot_residuals": "regression_residuals.png"
     }

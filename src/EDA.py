@@ -18,7 +18,7 @@ from src.data_utils import load_raw, numeric_cols
 
 PLOT_FILENAMES = [
     "placement_status.png", "missing_values.png", "cgpa_distribution.png",
-    "cgpa_histogram.png", "attendance_histogram.png", "cgpa_boxplot_by_status.png",
+    "attendance_histogram.png", "cgpa_boxplot_by_status.png",
     "cgpa_attendance.png", "placement_rate_by_tier.png", "top_correlations.png",
     "sgpa_trend.png", "correlation_heatmap.png",
 ]
@@ -45,7 +45,7 @@ def _plot_histogram(data, column, filename, title, bins=20):
 
 def _plot_boxplot(data, value_column, category_column, filename, title):
     fig, ax = plt.subplots(figsize=(7, 4))
-    sns.boxplot(data=data, x=category_column, y=value_column, ax=ax, palette="Set2")
+    sns.boxplot(data=data, x=category_column, y=value_column, hue=category_column, legend=False, ax=ax, palette="Set2", orient="v")
     ax.set_title(title)
     ax.set_xlabel(category_column)
     ax.set_ylabel(value_column)
@@ -76,7 +76,6 @@ def generate_all_plots(df=None):
         sns.histplot(data=data, x="CGPA", kde=True, ax=ax, color="#3867e8")
         ax.set_title("CGPA distribution")
         _save(fig, "cgpa_distribution.png")
-        _plot_histogram(data, "CGPA", "cgpa_histogram.png", "CGPA histogram")
     if "AttendancePercent" in data:
         _plot_histogram(data, "AttendancePercent", "attendance_histogram.png", "Attendance histogram")
     if {"CGPA", "PlacementStatus"}.issubset(data.columns):
@@ -107,7 +106,7 @@ def generate_all_plots(df=None):
         fig, ax = plt.subplots(figsize=(10, 8))
         sns.heatmap(corr, cmap="coolwarm", center=0, ax=ax)
         ax.set_title("Feature correlation heatmap")
-        _save(fig, "correation_heatmap.png")
+        _save(fig, "correlation_heatmap.png")
     sgpas = [f"SGPA_Sem{i}" for i in range(1, 9) if f"SGPA_Sem{i}" in data]
     if sgpas and "PlacementStatus" in data:
         trend = data.groupby("PlacementStatus")[sgpas].mean()
@@ -173,11 +172,106 @@ def get_correlation_stats(df=None):
     return {"top_correlations": corr.sort_values(ascending=False).round(3).to_dict()}
 
 
+def generate_eda_report(df=None, filepath=None):
+    """Generate and save a comprehensive EDA text summary report."""
+    data = _data(df)
+    out_path = Path(filepath) if filepath else config.EDA_REPORT_PATH
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    overview = get_overview_stats(data)
+    univariate = get_univariate_stats(data)
+    bivariate = get_bivariate_stats(data)
+    corr_stats = get_correlation_stats(data)
+    
+    lines = []
+    lines.append("=" * 70)
+    lines.append("       EXPLORATORY DATA ANALYSIS (EDA) SUMMARY REPORT")
+    lines.append("                  Placement Prediction")
+    lines.append("=" * 70)
+    lines.append("")
+    
+    lines.append("1. DATASET OVERVIEW")
+    lines.append("-" * 50)
+    lines.append(f"  * Total Records (Rows): {overview['rows']:,}")
+    lines.append(f"  * Total Features (Columns): {overview['cols']}")
+    lines.append(f"  * Duplicate Rows: {overview['duplicate_rows']}")
+    if overview.get('duplicate_ids'):
+        lines.append(f"  * Duplicate Student IDs: {overview['duplicate_ids']}")
+    lines.append("")
+    
+    lines.append("2. TARGET VARIABLE DISTRIBUTION (PlacementStatus)")
+    lines.append("-" * 50)
+    if overview['placement_counts']:
+        for status, count in overview['placement_counts'].items():
+            status_label = "Placed (1)" if status == 1 else "Not Placed (0)"
+            pct = overview['placement_pct'].get(status, 0)
+            lines.append(f"  * {status_label}: {count:,} ({pct:.2f}%)")
+    else:
+        lines.append("  * PlacementStatus column not found.")
+    lines.append("")
+    
+    lines.append("3. MISSING VALUES SUMMARY")
+    lines.append("-" * 50)
+    if overview['missing_table']:
+        for item in overview['missing_table']:
+            lines.append(f"  * {item['column']}: {item['count']:,} missing ({item['percent']}%)")
+    else:
+        lines.append("  * No missing values found across all columns.")
+    lines.append("")
+    
+    lines.append("4. NUMERICAL FEATURE DESCRIPTIVE STATISTICS")
+    lines.append("-" * 50)
+    for col_stat in univariate.get('numeric_table', []):
+        col_name = col_stat.get('column', '')
+        mean_val = col_stat.get('mean', 'N/A')
+        std_val = col_stat.get('std', 'N/A')
+        min_val = col_stat.get('min', 'N/A')
+        median_val = col_stat.get('50%', 'N/A')
+        max_val = col_stat.get('max', 'N/A')
+        skew_val = col_stat.get('skew', 'N/A')
+        lines.append(f"  * {col_name:<22} | Mean: {mean_val:>7} | Std: {std_val:>7} | Min: {min_val:>6} | Median: {median_val:>6} | Max: {max_val:>6} | Skew: {skew_val:>6}")
+    lines.append("")
+    
+    lines.append("5. CATEGORICAL BREAKDOWN & PLACEMENT RATES")
+    lines.append("-" * 50)
+    for cat_feature, rates in bivariate.get('placement_rate', {}).items():
+        lines.append(f"  * {cat_feature}:")
+        for cat_val, rate in rates.items():
+            lines.append(f"      - {str(cat_val):<18}: {rate:.2f}% placement rate")
+    lines.append("")
+    
+    lines.append("6. TOP CORRELATIONS WITH PLACEMENT STATUS")
+    lines.append("-" * 50)
+    for feat, corr_val in corr_stats.get('top_correlations', {}).items():
+        direction = "Positive" if corr_val > 0 else "Negative"
+        lines.append(f"  * {feat:<22}: {corr_val:>+.4f} ({direction})")
+    lines.append("")
+    
+    lines.append("7. OUTLIER ANALYSIS (IQR Method)")
+    lines.append("-" * 50)
+    for feat, count in bivariate.get('outliers', {}).items():
+        if count > 0:
+            lines.append(f"  * {feat:<22}: {count:,} outliers detected")
+    lines.append("")
+    lines.append("=" * 70)
+    lines.append("                       END OF REPORT")
+    lines.append("=" * 70)
+    
+    report_text = "\n".join(lines)
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write(report_text)
+    
+    return report_text
+
+
 if __name__ == "__main__":
     dataset = load_raw()
     generate_all_plots(dataset)
+    report_content = generate_eda_report(dataset)
     overview = get_overview_stats(dataset)
     print("EDA completed")
     print(f"Dataset shape: {overview['rows']} rows x {overview['cols']} columns")
     print(f"Duplicate rows: {overview['duplicate_rows']}")
     print(f"Generated charts: {config.PLOTS_DIR}")
+    print(f"Generated report: {config.EDA_REPORT_PATH}")
+

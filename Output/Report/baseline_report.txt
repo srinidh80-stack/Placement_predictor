@@ -1,0 +1,14 @@
+ZERO-RULE BASELINE MODEL REPORT
+==================================================
+Classification Baseline (Majority Class):
+  Target column: PlacementStatus
+  Majority class: 1 (Placed (1))
+  Baseline Accuracy: 65.71%
+  Baseline Error: 34.29%
+  Rule: Guessing 'Placed (1)' every time gives 65.71% accuracy.
+
+Regression Baseline (Mean Predictor):
+  Target column: Salary Package
+  Mean Salary Package: 14.47 LPA
+  Baseline MAE:  6.34 LPA
+  Baseline RMSE: 6.83 LPA

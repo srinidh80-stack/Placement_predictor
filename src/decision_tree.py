@@ -219,6 +219,7 @@ def generate_decision_tree_diagrams(clf_bundle, reg_bundle=None):
     diagrams = {}
     
     # 1. Tree Architecture Diagram
+    config.PLOTS_DIR.mkdir(parents=True, exist_ok=True)
     fig, ax = plt.subplots(figsize=(12, 6), dpi=150)
     plot_tree(
         clf_bundle["model"],
@@ -235,6 +236,9 @@ def generate_decision_tree_diagrams(clf_bundle, reg_bundle=None):
         fontsize=11, fontweight="bold", color="#0f766e", pad=12
     )
     fig.tight_layout()
+    tree_plot_path = config.PLOTS_DIR / "decision_tree_structure.png"
+    fig.savefig(tree_plot_path, bbox_inches="tight", dpi=120)
+    diagrams["plot_tree"] = "decision_tree_structure.png"
     diagrams["tree_plot"] = plot_to_base64(fig)
     
     # 2. Feature Importance Bar Chart
@@ -256,6 +260,9 @@ def generate_decision_tree_diagrams(clf_bundle, reg_bundle=None):
     ax.set_xlim(0, max(feat_scores) * 1.2 if feat_scores and max(feat_scores) > 0 else 1.0)
     ax.grid(axis="x", linestyle=":", alpha=0.6)
     fig.tight_layout()
+    dt_imp_path = config.PLOTS_DIR / "dt_feature_importance.png"
+    fig.savefig(dt_imp_path, bbox_inches="tight", dpi=120)
+    diagrams["plot_feature_importance"] = "dt_feature_importance.png"
     diagrams["feature_importance_plot"] = plot_to_base64(fig)
     
     # 3. Overfitting vs Depth Curve
@@ -276,6 +283,9 @@ def generate_decision_tree_diagrams(clf_bundle, reg_bundle=None):
     ax.legend(loc="lower right", frameon=True)
     ax.grid(True, linestyle=":", alpha=0.6)
     fig.tight_layout()
+    dt_depth_path = config.PLOTS_DIR / "dt_depth_curve.png"
+    fig.savefig(dt_depth_path, bbox_inches="tight", dpi=120)
+    diagrams["plot_depth_curve"] = "dt_depth_curve.png"
     diagrams["overfitting_plot"] = plot_to_base64(fig)
     
     return diagrams
@@ -304,3 +314,119 @@ def predict_placement_tree(inputs, clf_bundle):
         "probability": round(prob * 100, 1),
         "status_color": "#16a34a" if pred == 1 else "#dc2626",
     }
+
+
+def analyze_pruning_and_splitting(df=None, random_state=42):
+    """Analyze pre-pruning and cost-complexity pruning on 50k placement records."""
+    data, features = get_decision_tree_data(df)
+    X = data[features]
+    y = data[TARGET_CLASSIFICATION].astype(int)
+    
+    X_train, X_val, y_train, y_val = train_test_split(
+        X, y, test_size=0.2, random_state=random_state, stratify=y
+    )
+    
+    # 1. Full unconstrained tree (overfitting baseline)
+    full_tree = DecisionTreeClassifier(criterion="entropy", random_state=random_state)
+    full_tree.fit(X_train, y_train)
+    full_tr_acc = accuracy_score(y_train, full_tree.predict(X_train)) * 100
+    full_val_acc = accuracy_score(y_val, full_tree.predict(X_val)) * 100
+    full_depth = full_tree.get_depth()
+    full_leaves = full_tree.get_n_leaves()
+    
+    # 2. Pre-pruned tree (depth=3, min_samples_split=20, min_samples_leaf=10)
+    pruned_tree = DecisionTreeClassifier(
+        criterion="entropy", max_depth=3, min_samples_split=20, min_samples_leaf=10, random_state=random_state
+    )
+    pruned_tree.fit(X_train, y_train)
+    pruned_tr_acc = accuracy_score(y_train, pruned_tree.predict(X_train)) * 100
+    pruned_val_acc = accuracy_score(y_val, pruned_tree.predict(X_val)) * 100
+    pruned_depth = pruned_tree.get_depth()
+    pruned_leaves = pruned_tree.get_n_leaves()
+    
+    # 3. Cost-Complexity Pruning (ccp_alpha path on subsample for efficient evaluation)
+    sample_size = min(5000, len(X_train))
+    idx = np.random.RandomState(random_state).choice(len(X_train), size=sample_size, replace=False)
+    path = full_tree.cost_complexity_pruning_path(X_train.iloc[idx], y_train.iloc[idx])
+    ccp_alphas = path.ccp_alphas[::max(1, len(path.ccp_alphas) // 15)]  # sample 15 alphas
+    
+    alpha_val_accs = []
+    alpha_train_accs = []
+    for a in ccp_alphas:
+        t = DecisionTreeClassifier(random_state=random_state, ccp_alpha=a)
+        t.fit(X_train.iloc[idx], y_train.iloc[idx])
+        alpha_train_accs.append(accuracy_score(y_train, t.predict(X_train)) * 100)
+        alpha_val_accs.append(accuracy_score(y_val, t.predict(X_val)) * 100)
+        
+    # Generate Pruning Curve Plot
+    config.PLOTS_DIR.mkdir(parents=True, exist_ok=True)
+    fig, ax = plt.subplots(figsize=(8.5, 4.8), dpi=120)
+    ax.plot(ccp_alphas, alpha_train_accs, marker="o", color="#2563eb", linewidth=2, label="Train Accuracy")
+    ax.plot(ccp_alphas, alpha_val_accs, marker="s", color="#16a34a", linewidth=2, label="Validation Accuracy")
+    ax.set_title("Cost-Complexity Pruning: Effective Alpha vs Accuracy (50k Dataset)", fontsize=11, weight="bold", color="#1e293b", pad=12)
+    ax.set_xlabel("Effective Alpha (ccp_alpha)", fontsize=9.5, weight="bold")
+    ax.set_ylabel("Accuracy (%)", fontsize=9.5, weight="bold")
+    ax.legend(frameon=True, loc="upper right")
+    plt.tight_layout()
+    pruning_plot_path = config.PLOTS_DIR / "pruning_curve.png"
+    fig.savefig(pruning_plot_path, bbox_inches="tight", dpi=120)
+    plt.close(fig)
+    
+    # Write splitting and decision tree reports
+    config.REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    dt_rep_path = config.REPORTS_DIR / "decision_tree_report.txt"
+    with open(dt_rep_path, "w") as f:
+        f.write("DECISION TREE & PRUNING REPORT (50,000 PLACEMENT RECORDS)\n")
+        f.write("=" * 60 + "\n")
+        f.write(f"Unconstrained Tree:\n")
+        f.write(f"  Depth: {full_depth}, Leaves: {full_leaves}\n")
+        f.write(f"  Train Accuracy: {full_tr_acc:.2f}%, Val Accuracy: {full_val_acc:.2f}%\n")
+        f.write(f"  Overfitting Gap: {full_tr_acc - full_val_acc:.2f}%\n\n")
+        f.write(f"Pruned Tree (max_depth=3, min_samples_leaf=10):\n")
+        f.write(f"  Depth: {pruned_depth}, Leaves: {pruned_leaves}\n")
+        f.write(f"  Train Accuracy: {pruned_tr_acc:.2f}%, Val Accuracy: {pruned_val_acc:.2f}%\n")
+        f.write(f"  Overfitting Gap: {pruned_tr_acc - pruned_val_acc:.2f}%\n")
+        
+    crit_rep_path = config.REPORTS_DIR / "splitting_criteria_report.txt"
+    with open(crit_rep_path, "w") as f:
+        f.write("SPLITTING CRITERIA COMPARISON (ENTROPY vs GINI vs MSE)\n")
+        f.write("=" * 60 + "\n")
+        f.write("Classification Criteria:\n")
+        f.write("  - Entropy: H(S) = - sum(p_i * log2(p_i)). Information Gain = H(parent) - H(split)\n")
+        f.write("  - Gini Impurity: Gini(S) = 1 - sum(p_i^2). Computationally faster (no logarithm)\n\n")
+        f.write("Regression Criterion:\n")
+        f.write("  - Mean Squared Error (MSE): MSE = (1/n) * sum((y_i - y_mean)^2)\n")
+        f.write(f"Pruning Plot generated: {pruning_plot_path.name}\n")
+        
+    return {
+        "full_depth": full_depth,
+        "full_val_acc": round(full_val_acc, 2),
+        "pruned_depth": pruned_depth,
+        "pruned_val_acc": round(pruned_val_acc, 2),
+        "pruning_plot": "pruning_curve.png",
+        "decision_tree_report": str(dt_rep_path),
+        "splitting_report": str(crit_rep_path)
+    }
+
+
+if __name__ == "__main__":
+    print("=" * 70)
+    print("  DECISION TREE - PLACEMENT PREDICTION DATASET")
+    print("=" * 70)
+    
+    print("\n1. Loading project dataset...")
+    df = load_cleaned()
+    print(f"Dataset shape: {df.shape}")
+    
+    clf = train_decision_tree_classifier(df=df, criterion="entropy", max_depth=3)
+    print(f"\nDecision Tree (Entropy, Depth 3) -> Validation Acc: {clf['metrics']['val_accuracy']}%")
+    print(f"Root Impurity (Entropy): {clf['root_entropy']}")
+    print(f"Total Leaves: {clf['n_leaves']}")
+    
+    diagrams = generate_decision_tree_diagrams(clf)
+    print(f"Generated diagrams in: {config.PLOTS_DIR}")
+    
+    pruning_res = analyze_pruning_and_splitting(df)
+    print(f"Pruning analysis complete: full depth {pruning_res['full_depth']} vs pruned depth {pruning_res['pruned_depth']}")
+    print(f"Reports written to: {config.REPORTS_DIR}")
+    print("=" * 70)

@@ -1,0 +1,11 @@
+DECISION TREE & PRUNING REPORT (50,000 PLACEMENT RECORDS)
+============================================================
+Unconstrained Tree:
+  Depth: 39, Leaves: 2893
+  Train Accuracy: 100.00%, Val Accuracy: 87.33%
+  Overfitting Gap: 12.67%
+
+Pruned Tree (max_depth=3, min_samples_leaf=10):
+  Depth: 3, Leaves: 8
+  Train Accuracy: 88.04%, Val Accuracy: 87.77%
+  Overfitting Gap: 0.27%

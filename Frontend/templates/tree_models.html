@@ -1,0 +1,464 @@
+{% extends "base.html" %}
+
+{% block title %}Tree & Ensemble Models - Placement Prediction{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p class="eyebrow">MODULE 3 &bull; TREE &amp; ENSEMBLE LEARNING</p>
+    <h1>Tree &amp; Ensemble Models Dashboard</h1>
+    <p>Explore recursive partitioning, impurity reduction, the bias-variance tradeoff, bagging, and random forests on 50,000 student placement records.</p>
+</section>
+
+<!-- Overview Hero Card -->
+<section class="card hero-card">
+    <div class="card-heading">
+        <div>
+            <h2>Tree &amp; Ensemble Architecture</h2>
+            <p>From single decision trees and bias-variance balancing to multi-tree bagging and random forests.</p>
+        </div>
+        <span class="status-pill">Trained on {{ dt_data.train_samples }} samples</span>
+    </div>
+
+    <div class="dataset-info">
+        <div class="info-box">
+            <h3>{{ dt_data.metrics.val_accuracy }}%</h3>
+            <p>Decision Tree Acc</p>
+        </div>
+        <div class="info-box">
+            <h3>{{ rf_data.metrics.rf_accuracy }}%</h3>
+            <p>Random Forest Acc</p>
+        </div>
+        <div class="info-box">
+            <h3>{{ rf_data.metrics.rf_oob_score }}%</h3>
+            <p>RF OOB Score</p>
+        </div>
+        <div class="info-box">
+            <h3>Depth {{ bv_data.optimal_depth }}</h3>
+            <p>Optimal Tree Depth</p>
+        </div>
+    </div>
+</section>
+
+<!-- Folder Grid Navigation -->
+<section class="folder-grid" aria-label="Tree Models Topic Folders">
+    <!-- Folder 01: Decision Trees & Pruning -->
+    <article class="folder-box" data-target="tree-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 01</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Decision Trees</h2>
+            <p class="folder-desc">Splitting criteria (Entropy vs. Gini), depth constraints, and pruning diagnostics.</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. Entropy / IG</span>
+                <span class="topic-pill">2. Gini Impurity</span>
+                <span class="topic-pill">3. Depth Pruning</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 Decision Trees Overview</h4>
+            <ul>
+                <li><strong>Entropy:</strong> Measures information disorder: $H(S) = -\sum p_i \log_2(p_i)$.</li>
+                <li><strong>Gini Impurity:</strong> Measures probability of misclassification: $1 - \sum p_i^2$.</li>
+                <li><strong>Pruning:</strong> Restricting <code>max_depth</code> prevents memorization of noise.</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button type="button" class="show-folder-btn" data-target="tree-output">
+                <span class="folder-icon">📂</span>
+                <span class="btn-text">Explore Tree</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 02: Bias-Variance Diagnostics -->
+    <article class="folder-box" data-target="bias-variance-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 02</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Bias-Variance Tradeoff</h2>
+            <p class="folder-desc">Diagnostic curves tracking underfitting (high bias) vs overfitting (high variance).</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. Underfitting</span>
+                <span class="topic-pill">2. Overfitting Gap</span>
+                <span class="topic-pill">3. Optimal Depth</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 Bias-Variance Concepts</h4>
+            <ul>
+                <li><strong>High Bias (Underfitting):</strong> Depth 1-2 trees miss complex relationships (low train &amp; val accuracy).</li>
+                <li><strong>High Variance (Overfitting):</strong> Deep trees memorize train data (100% train, declining val accuracy).</li>
+                <li><strong>Optimal Tradeoff:</strong> The depth where validation error is minimized.</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button type="button" class="show-folder-btn" data-target="bias-variance-output">
+                <span class="folder-icon">📂</span>
+                <span class="btn-text">View Tradeoff</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 03: Random Forest & Bagging -->
+    <article class="folder-box" data-target="random-forest-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 03</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Random Forest &amp; Bagging</h2>
+            <p class="folder-desc">Bootstrap aggregation, Out-of-Bag (OOB) validation, and decorrelated feature voting.</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. Bootstrap Bagging</span>
+                <span class="topic-pill">2. OOB Evaluation</span>
+                <span class="topic-pill">3. Feature Importance</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 Random Forest Highlights</h4>
+            <ul>
+                <li><strong>Bagging:</strong> Reduces variance by training trees on bootstrap samples with replacement.</li>
+                <li><strong>Feature Subsampling:</strong> Considering only $\sqrt{p}$ features at each split decorrelates trees.</li>
+                <li><strong>OOB Score:</strong> Evaluates ensemble on leftover unselected samples (~36.8%) without a test set.</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button type="button" class="show-folder-btn" data-target="random-forest-output">
+                <span class="folder-icon">📂</span>
+                <span class="btn-text">Explore Forest</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 04: Live Tree Predictor -->
+    <article class="folder-box" data-target="tree-predictor-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 04</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Live Tree Predictor</h2>
+            <p class="folder-desc">Simulate student placement probability using single Decision Tree vs Random Forest ensemble.</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. Candidate Inputs</span>
+                <span class="topic-pill">2. Single Tree Vote</span>
+                <span class="topic-pill">3. Forest Consensus</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 Inference Simulation</h4>
+            <ul>
+                <li>Enter CGPA, scores, internships, and attendance to inspect predictions in real time.</li>
+                <li>Compare how a single pruned tree vs a 100-tree forest probabilities align.</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button type="button" class="show-folder-btn" data-target="tree-predictor-output">
+                <span class="folder-icon">📂</span>
+                <span class="btn-text">Run Predictor</span>
+            </button>
+        </div>
+    </article>
+</section>
+
+<!-- ==================== DETAIL OUTPUT PANELS ==================== -->
+
+<!-- Panel 01: Decision Tree Details -->
+<section id="tree-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 01 &bull; RECURSIVE PARTITIONING</p>
+            <h2>Decision Tree Classifier &amp; Splitting Criteria</h2>
+        </div>
+        <span class="status-pill">Depth: {{ dt_data.actual_depth }} &bull; Leaves: {{ dt_data.n_leaves }}</span>
+    </div>
+
+    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 16px 0;">
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">SPLITTING CRITERION</p>
+            <h4 style="font-size:1.15rem; color:#0f172a; margin:4px 0;">{{ criterion|capitalize }}</h4>
+            <p style="font-size:0.8rem; color:#475569;">Root Impurity: {{ dt_data.root_entropy if criterion == 'entropy' else dt_data.root_gini }}</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">VALIDATION ACCURACY</p>
+            <h4 style="font-size:1.15rem; color:#0f9f8f; margin:4px 0;">{{ dt_data.metrics.val_accuracy }}%</h4>
+            <p style="font-size:0.8rem; color:#475569;">F1-Score: {{ dt_data.metrics.f1_score }}%</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">PRECISION / RECALL</p>
+            <h4 style="font-size:1.15rem; color:#0f172a; margin:4px 0;">{{ dt_data.metrics.precision }}% / {{ dt_data.metrics.recall }}%</h4>
+            <p style="font-size:0.8rem; color:#475569;">ROC-AUC: {{ dt_data.metrics.roc_auc }}%</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">OVERFITTING CONTROL</p>
+            <h4 style="font-size:1.15rem; color:#0f172a; margin:4px 0;">max_depth = {{ max_depth }}</h4>
+            <p style="font-size:0.8rem; color:#475569;">Pruned to limit variance</p>
+        </div>
+    </div>
+
+    <!-- Tree Hyperparameter Form -->
+    <form method="POST" action="{{ url_for('tree_models_page') }}" style="margin: 15px 0 25px 0; background: #f1f5f9; padding: 16px; border-radius: 8px;">
+        <input type="hidden" name="action" value="tune_tree">
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end;">
+            <div>
+                <label style="font-size: 0.8rem; font-weight: 700; color: #334155; display:block; margin-bottom:4px;">Criterion</label>
+                <select name="criterion" style="padding: 7px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
+                    <option value="entropy" {% if criterion == 'entropy' %}selected{% endif %}>Entropy (Information Gain)</option>
+                    <option value="gini" {% if criterion == 'gini' %}selected{% endif %}>Gini Impurity</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-size: 0.8rem; font-weight: 700; color: #334155; display:block; margin-bottom:4px;">Max Depth</label>
+                <input type="number" name="max_depth" min="1" max="15" value="{{ max_depth }}" style="padding: 7px 12px; width: 100px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
+            </div>
+            <button type="submit" class="menu-btn" style="padding: 8px 16px; background: #0f9f8f; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                Update Tree Model
+            </button>
+        </div>
+    </form>
+
+    <div style="margin-top: 20px;">
+        <h3>Tree Visualization (Root Split and Top Levels)</h3>
+        <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 12px;">Visual representation of splitting thresholds and class distributions:</p>
+        <div style="text-align: center; background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; overflow-x: auto;">
+            <img src="{{ url_for('serve_plot', filename=dt_diagrams.plot_tree) }}" alt="Decision Tree Diagram" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+</section>
+
+<!-- Panel 02: Bias-Variance Output -->
+<section id="bias-variance-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 02 &bull; MODEL COMPLEXITY DIAGNOSTICS</p>
+            <h2>Bias-Variance Tradeoff Analysis</h2>
+        </div>
+        <span class="status-pill">Optimal Depth: {{ bv_data.optimal_depth }}</span>
+    </div>
+
+    <p style="margin: 10px 0 18px 0; color: #475569; font-size: 0.92rem; line-height: 1.5;">
+        As tree depth increases, the model transitions from <strong>High Bias (Underfitting)</strong> to <strong>High Variance (Overfitting)</strong>.
+        The chart below illustrates training error steadily dropping towards 0%, while validation error reaches an optimal minimum at depth {{ bv_data.optimal_depth }} before rising as the tree starts memorizing noise.
+    </p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px;">
+        <div class="stat-card" style="background:#fff8ea; padding:14px; border-radius:8px; border:1px solid #f5b84b;">
+            <p style="font-size:0.75rem; color:#b45309; font-weight:700;">UNDERFITTING (DEPTH 1)</p>
+            <h4 style="font-size:1.15rem; color:#b45309; margin:4px 0;">{{ bv_data.underfitting_error }}% Error</h4>
+            <p style="font-size:0.8rem; color:#78350f;">High Bias: Tree stump lacks capacity</p>
+        </div>
+        <div class="stat-card" style="background:#e8f8f4; padding:14px; border-radius:8px; border:1px solid #0f9f8f;">
+            <p style="font-size:0.75rem; color:#0a4f4b; font-weight:700;">OPTIMAL COMPLEXITY</p>
+            <h4 style="font-size:1.15rem; color:#0f9f8f; margin:4px 0;">Depth {{ bv_data.optimal_depth }}</h4>
+            <p style="font-size:0.8rem; color:#0a4f4b;">Best Val Accuracy: {{ bv_data.best_val_acc }}%</p>
+        </div>
+        <div class="stat-card" style="background:#fff1f2; padding:14px; border-radius:8px; border:1px solid #f43f5e;">
+            <p style="font-size:0.75rem; color:#be123c; font-weight:700;">OVERFITTING GAP (DEPTH {{ bv_data.overfitting_depth }})</p>
+            <h4 style="font-size:1.15rem; color:#be123c; margin:4px 0;">{{ bv_data.overfitting_gap }}% Gap</h4>
+            <p style="font-size:0.8rem; color:#881337;">Train accuracy memorizes test data</p>
+        </div>
+    </div>
+
+    <div style="text-align: center; background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+        <img src="{{ url_for('serve_plot', filename=bv_data.plot_filename) }}" alt="Bias-Variance Tradeoff Curve" style="max-width: 100%; height: auto; border-radius: 6px;">
+    </div>
+</section>
+
+<!-- Panel 03: Random Forest & Bagging Output -->
+<section id="random-forest-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 03 &bull; ENSEMBLE LEARNING</p>
+            <h2>Random Forest &amp; Bagging Classifier</h2>
+        </div>
+        <span class="status-pill">100 Estimators &bull; sqrt(p) Subsampling</span>
+    </div>
+
+    <div class="dataset-info" style="margin: 16px 0;">
+        <div class="info-box">
+            <h3>{{ rf_data.metrics.rf_accuracy }}%</h3>
+            <p>Random Forest Acc</p>
+        </div>
+        <div class="info-box">
+            <h3>{{ rf_data.metrics.rf_oob_score }}%</h3>
+            <p>Out-of-Bag (OOB)</p>
+        </div>
+        <div class="info-box">
+            <h3>{{ rf_data.metrics.bagging_accuracy }}%</h3>
+            <p>Standard Bagging Acc</p>
+        </div>
+        <div class="info-box">
+            <h3>{{ rf_data.metrics.rf_roc_auc }}%</h3>
+            <p>Forest ROC-AUC</p>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem; color: #1e293b;">Feature Importances (Gini Impurity Reduction)</h4>
+            <img src="{{ url_for('serve_plot', filename=rf_diagrams.plot_feature_importance) }}" alt="Random Forest Feature Importance" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem; color: #1e293b;">Ensemble Size (n_estimators) Tuning Curve</h4>
+            <img src="{{ url_for('serve_plot', filename=rf_diagrams.plot_estimators_curve) }}" alt="Estimators Curve" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+</section>
+
+<!-- Panel 04: Live Predictor Form -->
+<section id="tree-predictor-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 04 &bull; LIVE INFERENCE SIMULATOR</p>
+            <h2>Predict Placement with Tree &amp; Forest Ensembles</h2>
+        </div>
+        <span class="status-pill">Interactive</span>
+    </div>
+
+    {% if tree_prediction %}
+    <div style="background: #e8f8f4; border: 1.5px solid #0f9f8f; border-radius: 10px; padding: 18px; margin: 15px 0;">
+        <h3 style="color: #0a4f4b; margin: 0 0 10px 0;">Prediction Outcome: Candidate is {{ tree_prediction.placement_status|upper }}</h3>
+        <div style="display: flex; gap: 24px; font-size: 0.95rem;">
+            <p><strong>Model:</strong> {{ tree_prediction.model_name }}</p>
+            <p><strong>Placement Probability:</strong> <span style="color: #0f9f8f; font-weight: 700;">{{ tree_prediction.prob_placed }}%</span></p>
+            <p><strong>Non-Placement Probability:</strong> {{ tree_prediction.prob_not_placed }}%</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('tree_models_page') }}" style="margin-top: 15px;">
+        <input type="hidden" name="action" value="predict_candidate">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; background: #f8fafc; padding: 18px; border-radius: 10px; border: 1px solid #e2e8f0;">
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Ensemble Model</label>
+                <select name="predictor_model" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                    <option value="random_forest" {% if selected_predictor == 'random_forest' %}selected{% endif %}>Random Forest (100 Trees)</option>
+                    <option value="decision_tree" {% if selected_predictor == 'decision_tree' %}selected{% endif %}>Decision Tree (Pruned)</option>
+                </select>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">CGPA</label>
+                <input type="number" step="0.01" min="0" max="10" name="CGPA" value="{{ candidate_inputs.CGPA|default(7.8) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Coding Test Score</label>
+                <input type="number" step="0.1" min="0" max="100" name="CodingTestScore" value="{{ candidate_inputs.CodingTestScore|default(75.0) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Mock Interview Score</label>
+                <input type="number" step="0.1" min="0" max="100" name="MockInterviewScore" value="{{ candidate_inputs.MockInterviewScore|default(70.0) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Aptitude Test Score</label>
+                <input type="number" step="0.1" min="0" max="100" name="AptitudeTestScore" value="{{ candidate_inputs.AptitudeTestScore|default(72.0) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Attendance Percent (%)</label>
+                <input type="number" step="0.1" min="0" max="100" name="AttendancePercent" value="{{ candidate_inputs.AttendancePercent|default(85.0) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Soft Skills Rating</label>
+                <input type="number" step="0.1" min="1" max="5" name="SoftSkillsRating" value="{{ candidate_inputs.SoftSkillsRating|default(4.0) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Internships</label>
+                <input type="number" min="0" max="10" name="Internships" value="{{ candidate_inputs.Internships|default(2) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Projects Completed</label>
+                <input type="number" min="0" max="20" name="Projects" value="{{ candidate_inputs.Projects|default(3) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+        </div>
+
+        <div style="margin-top: 16px; text-align: right;">
+            <button type="submit" class="menu-btn" style="background: #0f9f8f; color: white; border: none; padding: 10px 24px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                Calculate Placement Probability
+            </button>
+        </div>
+    </form>
+</section>
+
+<!-- Folder Interactivity Script -->
+<script>
+    function openFolder(targetId, shouldScroll = true) {
+        document.querySelectorAll(".folder-panel").forEach((panel) => {
+            panel.hidden = true;
+        });
+
+        const activePanel = document.getElementById(targetId);
+        if (activePanel) {
+            activePanel.hidden = false;
+        }
+
+        document.querySelectorAll(".folder-box").forEach((b) => {
+            b.classList.remove("folder-open");
+            const btnText = b.querySelector(".btn-text");
+            if (btnText) {
+                btnText.textContent = "Explore " + (b.querySelector("h2")?.textContent || "Folder");
+            }
+        });
+
+        const activeBox = document.querySelector(`.folder-box[data-target="${targetId}"]`);
+        if (activeBox) {
+            activeBox.classList.add("folder-open");
+            const btnText = activeBox.querySelector(".btn-text");
+            if (btnText) btnText.textContent = "Hide Section";
+        }
+
+        if (shouldScroll && activePanel) {
+            activePanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
+
+    function toggleFolder(box, event) {
+        if (event) event.stopPropagation();
+        const targetId = box.dataset.target;
+        const panel = document.getElementById(targetId);
+        if (!panel) return;
+
+        if (!panel.hidden) {
+            panel.hidden = true;
+            box.classList.remove("folder-open");
+            const btnText = box.querySelector(".btn-text");
+            if (btnText) btnText.textContent = "Explore " + (box.querySelector("h2")?.textContent || "Folder");
+        } else {
+            openFolder(targetId, true);
+        }
+    }
+
+    document.querySelectorAll(".folder-box").forEach((box) => {
+        const button = box.querySelector(".show-folder-btn");
+        if (button) {
+            button.addEventListener("click", (e) => toggleFolder(box, e));
+        }
+        box.addEventListener("click", (e) => {
+            if (!e.target.closest(".folder-popup") && !e.target.closest(".show-folder-btn") && !e.target.closest("input") && !e.target.closest("button")) {
+                toggleFolder(box, e);
+            }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const activeFolder = "{{ active_folder|default('tree-output') }}";
+        if (activeFolder && document.getElementById(activeFolder)) {
+            openFolder(activeFolder, false);
+        }
+    });
+</script>
+{% endblock %}

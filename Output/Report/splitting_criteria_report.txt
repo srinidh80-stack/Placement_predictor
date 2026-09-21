@@ -1,0 +1,9 @@
+SPLITTING CRITERIA COMPARISON (ENTROPY vs GINI vs MSE)
+============================================================
+Classification Criteria:
+  - Entropy: H(S) = - sum(p_i * log2(p_i)). Information Gain = H(parent) - H(split)
+  - Gini Impurity: Gini(S) = 1 - sum(p_i^2). Computationally faster (no logarithm)
+
+Regression Criterion:
+  - Mean Squared Error (MSE): MSE = (1/n) * sum((y_i - y_mean)^2)
+Pruning Plot generated: pruning_curve.png

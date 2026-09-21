@@ -1,0 +1,25 @@
+LOGISTIC REGRESSION COEFFICIENTS & ODDS RATIOS REPORT (50,000 RECORDS)
+======================================================================
+Standardized Coefficients & Multiplicative Odds Ratios:
+Feature                Coefficient    Odds Ratio   Direction
+----------------------------------------------------------------------
+CGPA                       -2.146   x0.117       Decreases Odds
+SoftSkillsRating            1.017   x2.765       Increases Odds
+Internships                 0.931   x2.538       Increases Odds
+SGPA_Sem7                   0.799   x2.224       Increases Odds
+SGPA_Sem5                   0.764   x2.148       Increases Odds
+Projects                    0.754   x2.126       Increases Odds
+SGPA_Sem8                   0.717   x2.049       Increases Odds
+SGPA_Sem6                   0.690   x1.994       Increases Odds
+MockInterviewScore          0.541   x1.717       Increases Odds
+SGPA_Sem4                   0.525   x1.691       Increases Odds
+SGPA_Sem2                   0.491   x1.635       Increases Odds
+CodingTestScore             0.470   x1.600       Increases Odds
+AptitudeTestScore           0.461   x1.585       Increases Odds
+SGPA_Sem1                   0.454   x1.575       Increases Odds
+SGPA_Sem3                   0.453   x1.572       Increases Odds
+
+Multicollinearity Diagnostic:
+  CGPA correlates strongly (0.913) with the 8 SGPA semester columns. Because they represent nearly identical information, multicollinearity can cause individual coefficients to split or reverse sign (e.g. CGPA appearing slightly negative), even when overall accuracy is high.
+
+Generated Plot: top_coefficients.png

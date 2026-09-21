@@ -1,0 +1,10 @@
+TRAIN / VALIDATION / TEST SPLIT REPORT
+==================================================
+Total samples: 50000
+Train split: 34999 (70.0%) -> train.csv
+Validation split: 5001 (10.0%) -> val.csv
+Test split: 10000 (20.0%) -> test.csv
+Stratified target: PlacementStatus
+Train Placed rate: 65.71%
+Val Placed rate: 65.71%
+Test Placed rate: 65.71%

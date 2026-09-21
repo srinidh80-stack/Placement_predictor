@@ -1,0 +1,55 @@
+======================================================================
+MODULE 4 Â· SESSION 21: K-MEANS CLUSTERING REPORT
+Course: Machine Learning (25SC2107E) | Placement Prediction Dataset
+======================================================================
+
+Dataset Size: 50,000 student records
+Feature Space (10 numeric metrics):
+  - CGPA
+  - AptitudeTestScore
+  - CodingTestScore
+  - MockInterviewScore
+  - AttendancePercent
+  - SoftSkillsRating
+  - Internships
+  - Projects
+  - Workshops
+  - Certifications
+
+NOTE ON ZERO LEAKAGE:
+Target variables (PlacementStatus, Salary Package, IsAnomaly, StudentID)
+were strictly excluded from clustering to ensure completely unsupervised groupings.
+
+K-MEANS HYPERPARAMETER SWEEP (K=2..10):
+ K   Inertia  Silhouette
+ 2 272724.97      0.3835
+ 3 191340.73      0.3596
+ 4 182090.81      0.3652
+ 5 173071.33      0.3080
+ 6 164905.79      0.2956
+ 7 157890.45      0.1766
+ 8 154453.28      0.1186
+ 9 149098.90      0.1718
+10 145845.21      0.1700
+
+OPTIMAL CLUSTER SELECTION:
+  - Best K by Max Silhouette Score: K = 2 (Silhouette = 0.3835)
+  - Elbow Point (Max Second Difference): K = 3
+
+DISCOVERED CLUSTER PROFILES (K=2):
+
+  Cluster 0 [High Achiever Cohort]:
+    - Student Count: 18,241 (36.5% of cohort)
+    - Average CGPA: 8.57
+    - Average Coding Score: 77.1
+    - Average Aptitude Score: 81.48
+    - Average Internships: 1.84
+    - Post-Hoc Placement Rate: 98.3% (discovered naturally!)
+
+  Cluster 1 [Core / Mid-Tier Cohort]:
+    - Student Count: 31,759 (63.5% of cohort)
+    - Average CGPA: 6.49
+    - Average Coding Score: 46.13
+    - Average Aptitude Score: 61.74
+    - Average Internships: 0.72
+    - Post-Hoc Placement Rate: 47.0% (discovered naturally!)

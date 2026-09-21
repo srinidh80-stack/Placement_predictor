@@ -2,4 +2,5 @@
 __pycache__/
 *.pyc
 .idea/
-*.log
+*.log
+catboost_info/

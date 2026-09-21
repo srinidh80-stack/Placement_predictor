@@ -1,0 +1,436 @@
+{% extends "base.html" %}
+
+{% block title %}Unsupervised Learning & Clustering - Placement Prediction{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p class="eyebrow">NEXT STEP</p>
+    <h1>Unsupervised Learning &amp; Clustering</h1>
+    <p>{{ dataset_name }} is cleaned, split into train/test data, encoded, scaled, and analyzed using K-Means and Hierarchical Agglomerative clustering without supervision labels.</p>
+</section>
+
+<!-- Cleaned Dataset Hero Card - Exactly Matching Existing Structure -->
+<section class="card hero-card">
+    <div class="card-heading">
+        <div>
+            <h2>Cleaned dataset</h2>
+            <p>Missing score values are median-imputed, duplicate StudentID records are removed, and features prepared for clustering.</p>
+        </div>
+        <span class="status-pill">Ready for unsupervised clustering</span>
+    </div>
+
+    <div class="dataset-info">
+        <div class="info-box"><h3>{{ cleaned_shape[0] }}</h3><p>Rows</p></div>
+        <div class="info-box"><h3>{{ cleaned_shape[1] }}</h3><p>Columns</p></div>
+        <div class="info-box"><h3>{{ duplicate_count }}</h3><p>Duplicates removed</p></div>
+        <div class="info-box"><h3>{{ feature_columns|length }}</h3><p>Clustering features</p></div>
+    </div>
+</section>
+
+<!-- Numeric Feature Columns Card - Exactly Matching Existing Structure -->
+<section class="card">
+    <h2>Clustering feature columns</h2>
+    <div class="columns">
+        {% for column in feature_columns %}
+            <span class="column">{{ column }}</span>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Folder Grid - Fixed Sizing Matching Existing Feature Engg Layout -->
+<section class="folder-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 320px));" aria-label="Unsupervised clustering topic folders">
+    <!-- Folder 01: K-Means Clustering -->
+    <article class="folder-box" data-target="kmeans-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 01</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>K-Means Clustering</h2>
+            <p class="folder-desc">First group: Inertia (WCSS), Elbow inflection, and Silhouette score optimization.</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. Elbow Curve</span>
+                <span class="topic-pill">2. Silhouette</span>
+                <span class="topic-pill">3. PCA Clusters</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 K-Means Concepts</h4>
+            <ul>
+                <li><strong>Within-Cluster Sum of Squares (Inertia):</strong> Measures compactness $\sum_{k=1}^K \sum_{x \in C_k} \|x - \mu_k\|^2$.</li>
+                <li><strong>Silhouette Coefficient:</strong> Measures separation quality $\frac{b - a}{\max(a, b)} \in [-1, 1]$.</li>
+                <li><strong>Zero-Leakage Clustering:</strong> Trained purely on scaled skills &amp; academics with target withheld.</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="kmeans-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 02: Hierarchical Clustering -->
+    <article class="folder-box" data-target="hierarchical-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 02</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Hierarchical Clustering</h2>
+            <p class="folder-desc">Second group: Agglomerative bottom-up tree, 4 linkage rules, cophenetic correlation, and dendrograms.</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. Ward Linkage</span>
+                <span class="topic-pill">2. Cophenetic Corr</span>
+                <span class="topic-pill">3. Dendrogram Cuts</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 Hierarchical Clustering Insights</h4>
+            <ul>
+                <li><strong>Linkage Methods:</strong> Ward (variance-minimizing), Complete (max distance), Average (mean), Single (min distance).</li>
+                <li><strong>Chaining Effect:</strong> Single linkage forms elongated chains; Ward produces balanced cohorts.</li>
+                <li><strong>Adjusted Rand Index (ARI):</strong> Quantifies statistical agreement between K-Means and Ward tree cuts.</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="hierarchical-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+</section>
+
+<!-- ==================== DETAIL OUTPUT PANELS ==================== -->
+
+<!-- Panel 01: K-Means Clustering Details -->
+<section id="kmeans-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 01 &bull; SESSION 21 &bull; CENTROID PARTITIONING</p>
+            <h2>K-Means Clustering Analysis (K swept from 2 to 10)</h2>
+        </div>
+        <span class="status-pill">Optimal K = {{ km_data.optimal_k }} (Silhouette: {{ km_data.best_silhouette }})</span>
+    </div>
+
+    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 16px 0;">
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">OPTIMAL K (SILHOUETTE)</p>
+            <h4 style="font-size:1.15rem; color:#0f766e; margin:4px 0;">K = {{ km_data.optimal_k }}</h4>
+            <p style="font-size:0.8rem; color:#475569;">Peak Score: {{ km_data.best_silhouette }}</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">ELBOW INFLECTION POINT</p>
+            <h4 style="font-size:1.15rem; color:#f59e0b; margin:4px 0;">K = {{ km_data.elbow_k }}</h4>
+            <p style="font-size:0.8rem; color:#475569;">Max Curvature (2nd Diff)</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">INITIALIZATION</p>
+            <h4 style="font-size:1.15rem; color:#0f172a; margin:4px 0;">k-means++</h4>
+            <p style="font-size:0.8rem; color:#475569;">10 random restarts</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">FEATURE SPACE</p>
+            <h4 style="font-size:1.15rem; color:#0f172a; margin:4px 0;">{{ km_data.features|length }} Dimensions</h4>
+            <p style="font-size:0.8rem; color:#475569;">Z-Score Standardized</p>
+        </div>
+    </div>
+
+    <!-- Discovered Cohort Profiles Table -->
+    <div style="margin: 20px 0;">
+        <h3 style="margin-bottom: 8px;">Discovered Student Cohorts (Zero Target Leakage)</h3>
+        <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 12px;">
+            The model partitioned students purely on skill and academic scores. Notice how natural cohorts align with placement success:
+        </p>
+        <div style="overflow-x: auto; background: white; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
+                <thead>
+                    <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                        <th style="padding: 10px 14px;">Cluster</th>
+                        <th style="padding: 10px 14px;">Cohort Characterization</th>
+                        <th style="padding: 10px 14px;">Student Count</th>
+                        <th style="padding: 10px 14px;">Cohort Share</th>
+                        <th style="padding: 10px 14px;">Avg CGPA</th>
+                        <th style="padding: 10px 14px;">Avg Coding</th>
+                        <th style="padding: 10px 14px;">Avg Aptitude</th>
+                        <th style="padding: 10px 14px;">Placement Rate (Post-Hoc)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prof in km_data.cluster_profiles %}
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 10px 14px; font-weight: 700;">Cluster {{ prof.cluster_id }}</td>
+                        <td style="padding: 10px 14px;">
+                            <span style="display:inline-block; padding:3px 8px; border-radius:4px; font-weight:600; font-size:0.8rem; 
+                                  background:{% if prof.placement_rate > 75 %}#dcfce7; color:#166534;{% else %}#fef3c7; color:#92400e;{% endif %}">
+                                {{ prof.cohort_label }}
+                            </span>
+                        </td>
+                        <td style="padding: 10px 14px;">{{ "{:,}".format(prof.size) }}</td>
+                        <td style="padding: 10px 14px;">{{ prof.percentage }}%</td>
+                        <td style="padding: 10px 14px; font-weight: 600;">{{ prof.CGPA }}</td>
+                        <td style="padding: 10px 14px;">{{ prof.CodingTestScore }}</td>
+                        <td style="padding: 10px 14px;">{{ prof.AptitudeTestScore }}</td>
+                        <td style="padding: 10px 14px; font-weight: 700; color:{% if prof.placement_rate > 75 %}#16a34a{% else %}#d97706{% endif %};">
+                            {{ prof.placement_rate }}%
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Visualizations: Elbow Curve & PCA Cluster Scatter -->
+    <div style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem; color: #0f172a;">Elbow &amp; Silhouette Diagnostic Curves</h4>
+            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 10px;">Inertia elbow point at K={{ km_data.elbow_k }} and global maximum Silhouette at K={{ km_data.optimal_k }}:</p>
+            <img src="{{ url_for('serve_plot', filename=km_diagrams.plot_elbow_silhouette) }}" alt="Elbow and Silhouette Curves" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem; color: #0f172a;">2D PCA Cluster Separation &amp; Centroids</h4>
+            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 10px;">First two principal components visualizing student density and cluster centroids:</p>
+            <img src="{{ url_for('serve_plot', filename=km_diagrams.plot_cluster_scatter) }}" alt="K-Means Cluster Projection" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <!-- Hyperparameter Sweep Table -->
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">K-Means Hyperparameter Sweep Table (K = 2 .. 10)</h3>
+        <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 12px;">Inertia (Within-Cluster Sum of Squares) and sampled Silhouette Coefficients for each K:</p>
+        <div style="overflow-x: auto; background: white; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left;">
+                <thead>
+                    <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1;">
+                        <th style="padding: 8px 14px;">Clusters (K)</th>
+                        <th style="padding: 8px 14px;">Inertia (WCSS)</th>
+                        <th style="padding: 8px 14px;">Mean Silhouette Score</th>
+                        <th style="padding: 8px 14px;">Selection Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in km_data.sweep_df.to_dict(orient='records') %}
+                    <tr style="border-bottom: 1px solid #f1f5f9; {% if row.K == km_data.optimal_k %}background: #ecfdf5; font-weight: 700;{% endif %}">
+                        <td style="padding: 8px 14px;">K = {{ row.K }}</td>
+                        <td style="padding: 8px 14px;">{{ "{:,.2f}".format(row.Inertia) }}</td>
+                        <td style="padding: 8px 14px; color:{% if row.K == km_data.optimal_k %}#059669{% else %}inherit{% endif %};">{{ row.Silhouette }}</td>
+                        <td style="padding: 8px 14px;">
+                            {% if row.K == km_data.optimal_k %}
+                                <span style="color:#059669; font-weight:700;">★ Highest Silhouette (Optimal)</span>
+                            {% elif row.K == km_data.elbow_k %}
+                                <span style="color:#d97706; font-weight:600;">⚡ Elbow Inflection Point</span>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Embedded Session 21 Report -->
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Session 21 Diagnostic Report (kmeans_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 380px; overflow-y: auto;">
+            {% if km_report_lines %}
+                {% for line in km_report_lines %}
+                    <div>{{ line }}</div>
+                {% endfor %}
+            {% else %}
+                <p>K-Means report not found.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 02: Hierarchical Clustering Details -->
+<section id="hierarchical-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 02 &bull; SESSION 24 &bull; AGGLOMERATIVE HIERARCHY</p>
+            <h2>Hierarchical Clustering &amp; Dendrogram Diagnostics</h2>
+        </div>
+        <span class="status-pill">Subsampled n = {{ "{:,}".format(hier_data.n_sample) }} students &bull; ARI vs K-Means: {{ hier_data.ari_vs_kmeans }}</span>
+    </div>
+
+    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 16px 0;">
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">ADJUSTED RAND INDEX (ARI)</p>
+            <h4 style="font-size:1.15rem; color:#0f766e; margin:4px 0;">{{ hier_data.ari_vs_kmeans }}</h4>
+            <p style="font-size:0.8rem; color:#475569;">Ward tree cut vs K-Means (K=2)</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">TOP COPHENETIC CORRELATION</p>
+            <h4 style="font-size:1.15rem; color:#0284c7; margin:4px 0;">{{ hier_data.cophenetic_scores.average }} (Average)</h4>
+            <p style="font-size:0.8rem; color:#475569;">Ward: {{ hier_data.cophenetic_scores.ward }}</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">BEST WARD CUT (K)</p>
+            <h4 style="font-size:1.15rem; color:#10b981; margin:4px 0;">K = {{ hier_data.best_k_ward }}</h4>
+            <p style="font-size:0.8rem; color:#475569;">Silhouette: {{ hier_data.best_ward_sil }}</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">DISTANCE METRIC</p>
+            <h4 style="font-size:1.15rem; color:#0f172a; margin:4px 0;">Euclidean</h4>
+            <p style="font-size:0.8rem; color:#475569;">{{ "{:,}".format(hier_data.n_sample * (hier_data.n_sample - 1) // 2) }} pairwise pairs</p>
+        </div>
+    </div>
+
+    <!-- Linkage Comparison Table -->
+    <div style="margin: 20px 0;">
+        <h3 style="margin-bottom: 8px;">Linkage Methods &amp; The Chaining Effect Diagnostic</h3>
+        <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 12px;">
+            Comparing how merge criteria affect tree geometry. Single-linkage suffers from chaining (one huge group with singleton outliers), whereas Ward minimizes variance to produce balanced, compact clusters.
+        </p>
+        <div style="overflow-x: auto; background: white; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
+                <thead>
+                    <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                        <th style="padding: 10px 14px;">Linkage Method</th>
+                        <th style="padding: 10px 14px;">Merge Criterion</th>
+                        <th style="padding: 10px 14px;">Cophenetic Correlation</th>
+                        <th style="padding: 10px 14px;">Cluster Sizes at K=4</th>
+                        <th style="padding: 10px 14px;">Structural Observation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 10px 14px; font-weight: 700; color:#0f766e;">Ward (Variance)</td>
+                        <td style="padding: 10px 14px;">Minimizes total within-cluster variance increase</td>
+                        <td style="padding: 10px 14px; font-weight: 600;">{{ hier_data.cophenetic_scores.ward }}</td>
+                        <td style="padding: 10px 14px;">{{ hier_data.ward_sizes }}</td>
+                        <td style="padding: 10px 14px; color:#16a34a; font-weight:600;">Well-balanced partitions (resists chaining)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 10px 14px; font-weight: 700;">Complete (Max)</td>
+                        <td style="padding: 10px 14px;">Maximum distance between observations</td>
+                        <td style="padding: 10px 14px; font-weight: 600;">{{ hier_data.cophenetic_scores.complete }}</td>
+                        <td style="padding: 10px 14px;">Compact clusters, sensitive to outliers</td>
+                        <td style="padding: 10px 14px;">Good boundary definition</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 10px 14px; font-weight: 700;">Average (Mean)</td>
+                        <td style="padding: 10px 14px;">Mean distance between all pairs</td>
+                        <td style="padding: 10px 14px; font-weight: 600;">{{ hier_data.cophenetic_scores.average }}</td>
+                        <td style="padding: 10px 14px;">Compromise between single and complete</td>
+                        <td style="padding: 10px 14px;">Highest cophenetic correlation</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 10px 14px; font-weight: 700; color:#dc2626;">Single (Min)</td>
+                        <td style="padding: 10px 14px;">Minimum distance between observations</td>
+                        <td style="padding: 10px 14px; font-weight: 600;">{{ hier_data.cophenetic_scores.single }}</td>
+                        <td style="padding: 10px 14px;">{{ hier_data.single_sizes }}</td>
+                        <td style="padding: 10px 14px; color:#dc2626; font-weight:600;">Severe chaining (1 dominant cluster + singletons)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Visualizations: Dendrograms 2x2 & Cut Height Silhouette -->
+    <div style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem; color: #0f172a;">2x2 Dendrograms by Linkage Method</h4>
+            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 10px;">Truncated last 30 merges comparing tree geometry:</p>
+            <img src="{{ url_for('serve_plot', filename=hier_diagrams.plot_dendrograms) }}" alt="Hierarchical Dendrograms" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem; color: #0f172a;">Ward Tree: Silhouette Score by Cut Height (K=2..8)</h4>
+            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 10px;">Cutting one fitted dendrogram at multiple heights without refitting:</p>
+            <img src="{{ url_for('serve_plot', filename=hier_diagrams.plot_silhouette_cut) }}" alt="Silhouette by Cut Height" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <!-- Embedded Session 24 Report -->
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Session 24 Diagnostic Report (hierarchical_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 380px; overflow-y: auto;">
+            {% if hier_report_lines %}
+                {% for line in hier_report_lines %}
+                    <div>{{ line }}</div>
+                {% endfor %}
+            {% else %}
+                <p>Hierarchical report not found.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript for Folder Navigation -->
+<script>
+    function openFolder(targetId, shouldScroll) {
+        document.querySelectorAll(".folder-panel").forEach((panel) => {
+            panel.hidden = true;
+        });
+
+        document.querySelectorAll(".folder-box").forEach((box) => {
+            box.classList.remove("folder-open");
+            const btnText = box.querySelector(".btn-text");
+            if (btnText) {
+                btnText.textContent = "Show Data";
+            }
+        });
+
+        const activePanel = document.getElementById(targetId);
+        if (activePanel) {
+            activePanel.hidden = false;
+        }
+
+        const activeBox = document.querySelector(`.folder-box[data-target="${targetId}"]`);
+        if (activeBox) {
+            activeBox.classList.add("folder-open");
+            const btnText = activeBox.querySelector(".btn-text");
+            if (btnText) btnText.textContent = "Hide Section";
+        }
+
+        if (shouldScroll && activePanel) {
+            activePanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
+
+    function toggleFolder(box, event) {
+        if (event) event.stopPropagation();
+        const targetId = box.dataset.target;
+        const panel = document.getElementById(targetId);
+        if (!panel) return;
+
+        if (!panel.hidden) {
+            panel.hidden = true;
+            box.classList.remove("folder-open");
+            const btnText = box.querySelector(".btn-text");
+            if (btnText) btnText.textContent = "Show Data";
+        } else {
+            openFolder(targetId, true);
+        }
+    }
+
+    document.querySelectorAll(".folder-box").forEach((box) => {
+        const button = box.querySelector(".show-folder-btn");
+        if (button) {
+            button.addEventListener("click", (e) => toggleFolder(box, e));
+        }
+        box.addEventListener("click", (e) => {
+            if (!e.target.closest(".folder-popup") && !e.target.closest(".show-folder-btn") && !e.target.closest("input") && !e.target.closest("button")) {
+                toggleFolder(box, e);
+            }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const activeFolder = "{{ active_folder|default('kmeans-output') }}";
+        if (activeFolder && document.getElementById(activeFolder)) {
+            openFolder(activeFolder, false);
+        }
+    });
+</script>
+{% endblock %}

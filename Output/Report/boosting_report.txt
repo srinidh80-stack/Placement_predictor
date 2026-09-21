@@ -1,0 +1,19 @@
+BOOSTING FOUNDATIONS REPORT (50,000 PLACEMENT RECORDS)
+============================================================
+AdaBoost Classifier (100 Decision Stumps):
+  Accuracy:  89.82%
+  ROC-AUC:   96.33%
+  Precision: 90.6%
+  Recall:    94.29%
+  F1-Score:  92.41%
+
+Gradient Boosting Classifier (100 Stages, max_depth=3, lr=0.1):
+  Accuracy:  91.02%
+  ROC-AUC:   97.31%
+  Precision: 91.9%
+  Recall:    94.67%
+  F1-Score:  93.27%
+
+Generated Plots:
+  - boosting_staged_accuracy.png
+  - boosting_learning_rate.png

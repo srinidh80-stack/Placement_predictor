@@ -3,3 +3,8 @@ pandas
 Flask
 seaborn
 matplotlib
+scikit-learn
+xgboost
+lightgbm
+catboost
+scipy

@@ -1,0 +1,16 @@
+DATA CLEANING AND OUTLIER REPORT
+==================================================
+Rows before cleaning: 50000
+Rows after cleaning:  50000
+Duplicates removed:   0
+
+IQR Outlier Detection (1.5 * IQR bounds):
+  - CGPA                  : 0 outliers (0.0%) [Bounds: 2.38 to 12.14]
+  - AttendancePercent     : 0 outliers (0.0%) [Bounds: 40.15 to 113.35]
+  - AptitudeTestScore     : 183 outliers (0.37%) [Bounds: 31.95 to 106.75]
+  - CodingTestScore       : 806 outliers (1.61%) [Bounds: 10.25 to 109.05]
+  - MockInterviewScore    : 50 outliers (0.1%) [Bounds: 13.95 to 99.15]
+
+Value Clipping Applied:
+  - Scores and percentages clipped to valid range [0, 100]
+  - Categorical text columns whitespace-stripped and title-cased

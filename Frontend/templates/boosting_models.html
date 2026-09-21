@@ -1,0 +1,448 @@
+{% extends "base.html" %}
+
+{% block title %}Boosting Models & Modern Boosted Trees - Placement Prediction{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p class="eyebrow">MODULE 3 &bull; BOOSTING &amp; GRADIENT-BASED ENSEMBLES</p>
+    <h1>Boosting &amp; Modern Boosted Trees Dashboard</h1>
+    <p>Sequential error correction, gradient pseudo-residuals, learning rate shrinkage, and industry-standard benchmarks: XGBoost, LightGBM, and CatBoost.</p>
+</section>
+
+<!-- Overview Hero Card -->
+<section class="card hero-card">
+    <div class="card-heading">
+        <div>
+            <h2>Boosting &amp; Modern Ensemble Benchmarks</h2>
+            <p>From adaptive sample re-weighting (AdaBoost) to histogram-binned, leaf-wise modern gradient boosters.</p>
+        </div>
+        <span class="status-pill">Sequential Ensemble</span>
+    </div>
+
+    <div class="dataset-info">
+        <div class="info-box">
+            <h3>{{ boosting_data.metrics.adaboost.accuracy }}%</h3>
+            <p>AdaBoost Accuracy</p>
+        </div>
+        <div class="info-box">
+            <h3>{{ boosting_data.metrics.gradient_boosting.accuracy }}%</h3>
+            <p>Gradient Boosting Acc</p>
+        </div>
+        <div class="info-box">
+            <h3>{{ modern_data.benchmarks[0].accuracy if modern_data.benchmarks else '88.5' }}%</h3>
+            <p>XGBoost / Top Modern</p>
+        </div>
+        <div class="info-box">
+            <h3>{{ modern_data.benchmarks|length }} Frameworks</h3>
+            <p>Benchmarked</p>
+        </div>
+    </div>
+</section>
+
+<!-- Folder Grid Navigation -->
+<section class="folder-grid" aria-label="Boosting Models Topic Folders">
+    <!-- Folder 01: Boosting Fundamentals -->
+    <article class="folder-box" data-target="boosting-fundamentals-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 01</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Boosting Fundamentals</h2>
+            <p class="folder-desc">AdaBoost adaptive re-weighting vs. Gradient Boosting gradient-space descent.</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. Decision Stumps</span>
+                <span class="topic-pill">2. Pseudo-Residuals</span>
+                <span class="topic-pill">3. Staged Accuracy</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 Fundamentals Highlights</h4>
+            <ul>
+                <li><strong>AdaBoost:</strong> Sequentially increases weights of misclassified records; aggregates with $\alpha_m$ vote.</li>
+                <li><strong>Gradient Boosting:</strong> Fits each subsequent tree to the negative gradient (residuals) of the loss function.</li>
+                <li><strong>Progression:</strong> Accuracy improves stage by stage as weak learners specialize on hard cases.</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button type="button" class="show-folder-btn" data-target="boosting-fundamentals-output">
+                <span class="folder-icon">📂</span>
+                <span class="btn-text">Explore Basics</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 02: Learning Rate & Shrinkage -->
+    <article class="folder-box" data-target="learning-rate-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 02</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Learning Rate &amp; Shrinkage</h2>
+            <p class="folder-desc">Balancing convergence speed and generalization with shrinkage factor $\eta$.</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. Shrinkage ($\eta$)</span>
+                <span class="topic-pill">2. Overfitting Control</span>
+                <span class="topic-pill">3. Convergence Rate</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 Learning Rate Insights</h4>
+            <ul>
+                <li><strong>Too High ($\eta \ge 0.5$):</strong> Overshoots minimum; early plateau or overfitting.</li>
+                <li><strong>Moderate ($\eta = 0.1$):</strong> Stable convergence across 100 stages.</li>
+                <li><strong>Small ($\eta \le 0.05$):</strong> Requires more estimators but yields lower variance and better test generalization.</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button type="button" class="show-folder-btn" data-target="learning-rate-output">
+                <span class="folder-icon">📂</span>
+                <span class="btn-text">View Shrinkage</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 03: Modern Boosted Trees -->
+    <article class="folder-box" data-target="modern-boosting-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 03</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Modern Boosted Trees</h2>
+            <p class="folder-desc">State-of-the-art benchmarks: XGBoost, LightGBM, and CatBoost speed vs accuracy.</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. XGBoost</span>
+                <span class="topic-pill">2. LightGBM</span>
+                <span class="topic-pill">3. CatBoost</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 Modern Framework Differences</h4>
+            <ul>
+                <li><strong>XGBoost:</strong> 2nd order Taylor expansion (gradients + Hessians) with depth-wise growth.</li>
+                <li><strong>LightGBM:</strong> Best-first (leaf-wise) split strategy with histogram binning for ultra fast training.</li>
+                <li><strong>CatBoost:</strong> Symmetric oblivious trees and target statistics handling with minimal hyperparameter tuning.</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button type="button" class="show-folder-btn" data-target="modern-boosting-output">
+                <span class="folder-icon">📂</span>
+                <span class="btn-text">View Benchmark</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 04: Live Boosting Predictor -->
+    <article class="folder-box" data-target="boosting-predictor-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 04</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Live Boosting Predictor</h2>
+            <p class="folder-desc">Test student placement probability using AdaBoost, Gradient Boosting, or XGBoost.</p>
+
+            <div class="folder-topics">
+                <span class="topic-pill">1. Candidate Simulation</span>
+                <span class="topic-pill">2. Ensemble Probabilities</span>
+                <span class="topic-pill">3. Real-Time Scoring</span>
+            </div>
+        </div>
+
+        <div class="folder-popup">
+            <h4>💡 Inference Workbench</h4>
+            <ul>
+                <li>Select your chosen boosting engine and enter academic and skill parameters.</li>
+                <li>View calibrated placement probability score calculated instantaneously.</li>
+            </ul>
+        </div>
+
+        <div class="folder-footer">
+            <button type="button" class="show-folder-btn" data-target="boosting-predictor-output">
+                <span class="folder-icon">📂</span>
+                <span class="btn-text">Run Predictor</span>
+            </button>
+        </div>
+    </article>
+</section>
+
+<!-- ==================== DETAIL OUTPUT PANELS ==================== -->
+
+<!-- Panel 01: Boosting Fundamentals Details -->
+<section id="boosting-fundamentals-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 01 &bull; SEQUENTIAL ENSEMBLES</p>
+            <h2>AdaBoost vs. Gradient Boosting Comparison</h2>
+        </div>
+        <span class="status-pill">100 Iterations &bull; lr = 0.1</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h3 style="color: #3a6b88; margin: 0; font-size: 1.05rem;">AdaBoost (Adaptive Boosting)</h3>
+                <span class="status-pill" style="background:#e0f2fe; color:#0369a1;">Decision Stumps</span>
+            </div>
+            <p style="font-size: 0.85rem; color: #475569; margin-bottom: 12px;">Combines sequential 1-split decision stumps, dynamically inflating weights of misclassified records.</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.88rem;">
+                <p><strong>Accuracy:</strong> {{ boosting_data.metrics.adaboost.accuracy }}%</p>
+                <p><strong>ROC-AUC:</strong> {{ boosting_data.metrics.adaboost.roc_auc }}%</p>
+                <p><strong>Precision:</strong> {{ boosting_data.metrics.adaboost.precision }}%</p>
+                <p><strong>F1-Score:</strong> {{ boosting_data.metrics.adaboost.f1 }}%</p>
+            </div>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h3 style="color: #0f9f8f; margin: 0; font-size: 1.05rem;">Gradient Boosting (GBM)</h3>
+                <span class="status-pill" style="background:#e8f8f4; color:#0a4f4b;">Depth 3 Trees</span>
+            </div>
+            <p style="font-size: 0.85rem; color: #475569; margin-bottom: 12px;">Minimizes log-loss by fitting shallow trees directly to the negative gradient (pseudo-residuals).</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.88rem;">
+                <p><strong>Accuracy:</strong> {{ boosting_data.metrics.gradient_boosting.accuracy }}%</p>
+                <p><strong>ROC-AUC:</strong> {{ boosting_data.metrics.gradient_boosting.roc_auc }}%</p>
+                <p><strong>Precision:</strong> {{ boosting_data.metrics.gradient_boosting.precision }}%</p>
+                <p><strong>F1-Score:</strong> {{ boosting_data.metrics.gradient_boosting.f1 }}%</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 15px;">
+        <h4 style="margin-bottom: 8px; font-size: 0.95rem; color: #1e293b;">Staged Test Accuracy Progression Across 100 Iterations</h4>
+        <img src="{{ url_for('serve_plot', filename=boosting_diagrams.plot_staged_accuracy) }}" alt="Boosting Staged Accuracy" style="max-width: 100%; height: auto; border-radius: 6px;">
+    </div>
+</section>
+
+<!-- Panel 02: Learning Rate Output -->
+<section id="learning-rate-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 02 &bull; HYPERPARAMETER TUNING</p>
+            <h2>Learning Rate (Shrinkage) &amp; Convergence Analysis</h2>
+        </div>
+        <span class="status-pill">Shrinkage Factor $\eta$</span>
+    </div>
+
+    <p style="margin: 10px 0 16px 0; color: #475569; font-size: 0.92rem; line-height: 1.5;">
+        Shrinkage scales each tree's contribution by $0 &lt; \eta \le 1$: $F_m(x) = F_{m-1}(x) + \eta \cdot \gamma_m h_m(x)$.
+        A lower learning rate forces the model to take smaller, more cautious steps, preventing individual trees from over-committing to noise and producing lower test error.
+    </p>
+
+    <div style="text-align: center; background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+        <img src="{{ url_for('serve_plot', filename=boosting_diagrams.plot_learning_rate) }}" alt="Learning Rate vs Accuracy" style="max-width: 100%; height: auto; border-radius: 6px;">
+    </div>
+</section>
+
+<!-- Panel 03: Modern Boosted Trees Output -->
+<section id="modern-boosting-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 03 &bull; BENCHMARKS</p>
+            <h2>Modern Boosted Trees Benchmark Table</h2>
+        </div>
+        <span class="status-pill">XGBoost &bull; LightGBM &bull; CatBoost</span>
+    </div>
+
+    <div style="overflow-x: auto; margin: 16px 0;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
+            <thead>
+                <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                    <th style="padding: 10px 14px;">Framework</th>
+                    <th style="padding: 10px 14px;">Accuracy</th>
+                    <th style="padding: 10px 14px;">F1-Score</th>
+                    <th style="padding: 10px 14px;">ROC-AUC</th>
+                    <th style="padding: 10px 14px;">Train Time</th>
+                    <th style="padding: 10px 14px;">Latency (ms)</th>
+                    <th style="padding: 10px 14px;">Key Architectural Strength</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in modern_data.benchmarks %}
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 10px 14px; font-weight: 700; color: #0f172a;">{{ b.model }}</td>
+                    <td style="padding: 10px 14px; color: #0f9f8f; font-weight: 700;">{{ b.accuracy }}%</td>
+                    <td style="padding: 10px 14px;">{{ b.f1 }}%</td>
+                    <td style="padding: 10px 14px;">{{ b.roc_auc }}%</td>
+                    <td style="padding: 10px 14px; font-weight: 600;">{{ b.train_time_sec }}s</td>
+                    <td style="padding: 10px 14px;">{{ b.infer_latency_ms }} ms</td>
+                    <td style="padding: 10px 14px; font-size: 0.82rem; color: #475569;">{{ b.key_strength }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem; color: #1e293b;">Test Accuracy vs Training Speed</h4>
+            <img src="{{ url_for('serve_plot', filename=modern_diagrams.plot_comparison) }}" alt="Modern Boosting Comparison" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem; color: #1e293b;">XGBoost Feature Importance</h4>
+            <img src="{{ url_for('serve_plot', filename=modern_diagrams.plot_feature_importance) }}" alt="XGBoost Feature Importance" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+</section>
+
+<!-- Panel 04: Live Boosting Predictor -->
+<section id="boosting-predictor-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 04 &bull; LIVE INFERENCE SIMULATOR</p>
+            <h2>Predict Placement with Boosted Models</h2>
+        </div>
+        <span class="status-pill">Interactive</span>
+    </div>
+
+    {% if boosting_prediction %}
+    <div style="background: #e8f8f4; border: 1.5px solid #0f9f8f; border-radius: 10px; padding: 18px; margin: 15px 0;">
+        <h3 style="color: #0a4f4b; margin: 0 0 10px 0;">Prediction Outcome: Candidate is {{ boosting_prediction.placement_status|upper }}</h3>
+        <div style="display: flex; gap: 24px; font-size: 0.95rem;">
+            <p><strong>Engine:</strong> {{ boosting_prediction.model_name }}</p>
+            <p><strong>Placement Probability:</strong> <span style="color: #0f9f8f; font-weight: 700;">{{ boosting_prediction.prob_placed }}%</span></p>
+            <p><strong>Non-Placement Probability:</strong> {{ boosting_prediction.prob_not_placed }}%</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('boosting_models_page') }}" style="margin-top: 15px;">
+        <input type="hidden" name="action" value="predict_candidate">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; background: #f8fafc; padding: 18px; border-radius: 10px; border: 1px solid #e2e8f0;">
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Boosting Engine</label>
+                <select name="predictor_model" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                    <option value="gradient_boosting" {% if selected_predictor == 'gradient_boosting' %}selected{% endif %}>Gradient Boosting (Scikit-Learn)</option>
+                    <option value="adaboost" {% if selected_predictor == 'adaboost' %}selected{% endif %}>AdaBoost (Decision Stumps)</option>
+                    {% if modern_data.available_libraries.xgboost %}
+                    <option value="xgboost" {% if selected_predictor == 'xgboost' %}selected{% endif %}>XGBoost Classifier</option>
+                    {% endif %}
+                    {% if modern_data.available_libraries.lightgbm %}
+                    <option value="lightgbm" {% if selected_predictor == 'lightgbm' %}selected{% endif %}>LightGBM Classifier</option>
+                    {% endif %}
+                    {% if modern_data.available_libraries.catboost %}
+                    <option value="catboost" {% if selected_predictor == 'catboost' %}selected{% endif %}>CatBoost Classifier</option>
+                    {% endif %}
+                </select>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">CGPA</label>
+                <input type="number" step="0.01" min="0" max="10" name="CGPA" value="{{ candidate_inputs.CGPA|default(7.8) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Coding Test Score</label>
+                <input type="number" step="0.1" min="0" max="100" name="CodingTestScore" value="{{ candidate_inputs.CodingTestScore|default(75.0) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Mock Interview Score</label>
+                <input type="number" step="0.1" min="0" max="100" name="MockInterviewScore" value="{{ candidate_inputs.MockInterviewScore|default(70.0) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Aptitude Test Score</label>
+                <input type="number" step="0.1" min="0" max="100" name="AptitudeTestScore" value="{{ candidate_inputs.AptitudeTestScore|default(72.0) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Attendance Percent (%)</label>
+                <input type="number" step="0.1" min="0" max="100" name="AttendancePercent" value="{{ candidate_inputs.AttendancePercent|default(85.0) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Soft Skills Rating</label>
+                <input type="number" step="0.1" min="1" max="5" name="SoftSkillsRating" value="{{ candidate_inputs.SoftSkillsRating|default(4.0) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Internships</label>
+                <input type="number" min="0" max="10" name="Internships" value="{{ candidate_inputs.Internships|default(2) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Projects Completed</label>
+                <input type="number" min="0" max="20" name="Projects" value="{{ candidate_inputs.Projects|default(3) }}" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;" required>
+            </div>
+        </div>
+
+        <div style="margin-top: 16px; text-align: right;">
+            <button type="submit" class="menu-btn" style="background: #0f9f8f; color: white; border: none; padding: 10px 24px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                Evaluate Placement Probability
+            </button>
+        </div>
+    </form>
+</section>
+
+<!-- Folder Interactivity Script -->
+<script>
+    function openFolder(targetId, shouldScroll = true) {
+        document.querySelectorAll(".folder-panel").forEach((panel) => {
+            panel.hidden = true;
+        });
+
+        const activePanel = document.getElementById(targetId);
+        if (activePanel) {
+            activePanel.hidden = false;
+        }
+
+        document.querySelectorAll(".folder-box").forEach((b) => {
+            b.classList.remove("folder-open");
+            const btnText = b.querySelector(".btn-text");
+            if (btnText) {
+                btnText.textContent = "Explore " + (b.querySelector("h2")?.textContent || "Folder");
+            }
+        });
+
+        const activeBox = document.querySelector(`.folder-box[data-target="${targetId}"]`);
+        if (activeBox) {
+            activeBox.classList.add("folder-open");
+            const btnText = activeBox.querySelector(".btn-text");
+            if (btnText) btnText.textContent = "Hide Section";
+        }
+
+        if (shouldScroll && activePanel) {
+            activePanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
+
+    function toggleFolder(box, event) {
+        if (event) event.stopPropagation();
+        const targetId = box.dataset.target;
+        const panel = document.getElementById(targetId);
+        if (!panel) return;
+
+        if (!panel.hidden) {
+            panel.hidden = true;
+            box.classList.remove("folder-open");
+            const btnText = box.querySelector(".btn-text");
+            if (btnText) btnText.textContent = "Explore " + (box.querySelector("h2")?.textContent || "Folder");
+        } else {
+            openFolder(targetId, true);
+        }
+    }
+
+    document.querySelectorAll(".folder-box").forEach((box) => {
+        const button = box.querySelector(".show-folder-btn");
+        if (button) {
+            button.addEventListener("click", (e) => toggleFolder(box, e));
+        }
+        box.addEventListener("click", (e) => {
+            if (!e.target.closest(".folder-popup") && !e.target.closest(".show-folder-btn") && !e.target.closest("input") && !e.target.closest("button")) {
+                toggleFolder(box, e);
+            }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const activeFolder = "{{ active_folder|default('boosting-fundamentals-output') }}";
+        if (activeFolder && document.getElementById(activeFolder)) {
+            openFolder(activeFolder, false);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,25 @@
+RANDOM FOREST & BAGGING REPORT (50,000 PLACEMENT RECORDS)
+============================================================
+Random Forest Classifier (100 Estimators, max_features='sqrt'):
+  Test Accuracy:     90.8%
+  Out-of-Bag (OOB):  90.95%
+  ROC-AUC Score:     97.07%
+  Precision:         91.44%
+  Recall:            94.89%
+  F1-Score:          93.13%
+
+Standard Bagging Comparison:
+  Test Accuracy:     90.26%
+  OOB Score:         90.66%
+
+Top Feature Importances (Gini Impurity Reduction):
+  - CGPA                : 32.08%
+  - MockInterviewScore  : 17.72%
+  - CodingTestScore     : 14.59%
+  - Projects            : 8.05%
+  - AptitudeTestScore   : 7.4%
+  - SoftSkillsRating    : 6.95%
+  - AttendancePercent   : 4.98%
+  - Certifications      : 3.83%
+  - Internships         : 3.19%
+  - Workshops           : 1.19%
