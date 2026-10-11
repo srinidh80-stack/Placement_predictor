@@ -1,0 +1,733 @@
+{% extends "base.html" %}
+
+{% block title %}Model Evaluation & Statistical Diagnostics - Placement Prediction{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p class="eyebrow">MODULE 5 &bull; STATISTICAL RIGOR</p>
+    <h1>Model Evaluation &amp; Diagnostics</h1>
+    <p>Comprehensive evaluation and optimization suite for {{ dataset_name }}: 10 diagnostic modules covering data leakage prevention, nested validation, cost-sensitive threshold tuning, regression robustness, search benchmarks, learning curves, Bayesian optimization, and paired significance testing.</p>
+</section>
+
+<!-- Overview Hero Card -->
+<section class="card hero-card">
+    <div class="card-heading">
+        <div>
+            <h2>Evaluation &amp; Validation Framework</h2>
+            <p>Rigorous statistical testing beyond simple holdout scores. All benchmarks executed on persistent 50,000-student splits.</p>
+        </div>
+        <span class="status-pill">10 Evaluation Modules Ready</span>
+    </div>
+
+    <div class="dataset-info">
+        <div class="info-box"><h3>{{ cleaned_shape[0] }}</h3><p>Evaluated Students</p></div>
+        <div class="info-box"><h3>5-Fold</h3><p>Stratified &amp; Nested CV</p></div>
+        <div class="info-box"><h3>30 Trials</h3><p>Bayesian Search Budget</p></div>
+        <div class="info-box"><h3>2,000</h3><p>Bootstrap Resamples</p></div>
+    </div>
+</section>
+
+<!-- Folder Grid: 10 Evaluation Modules -->
+<section class="folder-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 320px)); margin-bottom: 28px;" aria-label="Model evaluation topic folders">
+    
+    <!-- Folder 01: Data Leakage -->
+    <article class="folder-box" data-target="leakage-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 01</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Data Leakage</h2>
+            <p class="folder-desc">Demonstrating pre-split scaling leakage, feature selection leakage, and pure noise inflation.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. Pre-Split Scaling</span>
+                <span class="topic-pill">2. Selection Leakage</span>
+                <span class="topic-pill">3. Noise Inflation</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 Data Leakage Insights</h4>
+            <ul>
+                <li><strong>Scaling Leakage:</strong> Computing global $\mu, \sigma$ before splitting lets test information bleed into train estimators.</li>
+                <li><strong>Selection on Full Data:</strong> Picking top features before splitting yields spuriously high CV scores on pure noise.</li>
+                <li><strong>Pipeline Encapsulation:</strong> All transformers must be fit strictly within training folds.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="leakage-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 02: Cross-Validation -->
+    <article class="folder-box" data-target="cv-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 02</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Cross-Validation</h2>
+            <p class="folder-desc">Holdout variance vs 5-fold CV, stratification stability on sorted data, and train-CV gap.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. Holdout vs 5-Fold</span>
+                <span class="topic-pill">2. K-Fold Stability</span>
+                <span class="topic-pill">3. Stratification</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 Cross-Validation Insights</h4>
+            <ul>
+                <li><strong>Holdout Seed Sensitivity:</strong> A single 80/20 split has high sampling variance depending on the random seed.</li>
+                <li><strong>StratifiedKFold:</strong> Preserves placement class balance across all folds, essential when sorted by college tier or GPA.</li>
+                <li><strong>Generalization Gap:</strong> Measures difference between train score and out-of-fold validation score.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="cv-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 03: Nested Cross-Validation -->
+    <article class="folder-box" data-target="nested-cv-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 03</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Nested Cross-Validation</h2>
+            <p class="folder-desc">Measuring selection optimism in non-nested CV vs unbiased nested outer fold evaluation.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. Selection Optimism</span>
+                <span class="topic-pill">2. 5x3 Nested Loops</span>
+                <span class="topic-pill">3. Sample Size Effect</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 Nested CV Insights</h4>
+            <ul>
+                <li><strong>Optimistic Bias:</strong> Tuning hyperparameters on the same folds used for final scoring overestimates true performance.</li>
+                <li><strong>Inner Loop:</strong> Tunes hyperparameters; <strong>Outer Loop:</strong> Provides an honest estimate of generalization error.</li>
+                <li><strong>Sample Size:</strong> Selection optimism is pronounced on smaller samples and diminishes with large N.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="nested-cv-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 04: Threshold Tuning -->
+    <article class="folder-box" data-target="threshold-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 04</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Threshold Tuning</h2>
+            <p class="folder-desc">Beyond default 0.5: Confusion matrices across thresholds and cost-sensitive optimization.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. Cutoff Sweeps</span>
+                <span class="topic-pill">2. Cost Matrix</span>
+                <span class="topic-pill">3. Asymmetric Penalties</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 Threshold Tuning Insights</h4>
+            <ul>
+                <li><strong>Threshold Shift:</strong> Lowering threshold catches more positive cases (high recall) at cost of false positives.</li>
+                <li><strong>Asymmetric Cost:</strong> Missing a candidate who would be placed (FN) may be 5x more costly than false alarm (FP).</li>
+                <li><strong>Optimal Cutoff:</strong> Pinpoints the exact probability threshold that minimizes total business loss.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="threshold-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 05: ROC & PR Curves -->
+    <article class="folder-box" data-target="roc-pr-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 05</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>ROC &amp; PR Curves</h2>
+            <p class="folder-desc">Evaluating ranking discrimination and class imbalance sensitivity (10% and 3% minority rates).</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. ROC AUC</span>
+                <span class="topic-pill">2. PR AUC</span>
+                <span class="topic-pill">3. Imbalance Contrast</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 ROC vs PR Insights</h4>
+            <ul>
+                <li><strong>ROC Invariance:</strong> ROC curves are insensitive to changes in class prevalence.</li>
+                <li><strong>PR Curve Precision:</strong> Under severe class imbalance, PR curves expose false alarm rates that ROC obscures.</li>
+                <li><strong>No-Skill Baseline:</strong> ROC baseline is always 0.5; PR baseline equals the positive class prevalence.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="roc-pr-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 06: Regression Metrics -->
+    <article class="folder-box" data-target="regression-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 06</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Regression Metrics</h2>
+            <p class="folder-desc">Salary Package residual diagnostics, homoscedasticity, QQ plots, and outlier degradation curves.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. Residual QQ Plots</span>
+                <span class="topic-pill">2. Huber vs MSE</span>
+                <span class="topic-pill">3. Outlier Breakdown</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 Regression Diagnostics Insights</h4>
+            <ul>
+                <li><strong>Homoscedasticity:</strong> Constant residual variance across predicted salary levels.</li>
+                <li><strong>Loss Robustness:</strong> MSE squares large errors; MAE and Huber loss resist extreme salary package outliers.</li>
+                <li><strong>Diagnostic Checks:</strong> Residual normality and leverage point identification.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="regression-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 07: Grid vs Random Search -->
+    <article class="folder-box" data-target="search-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 07</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Search Benchmark</h2>
+            <p class="folder-desc">Grid Search vs Random Search across 2D Decision Trees and 5D LightGBM models under equal budgets.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. 2D Grid Sweep</span>
+                <span class="topic-pill">2. 5D Random Search</span>
+                <span class="topic-pill">3. Budget Efficiency</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 Search Strategy Insights</h4>
+            <ul>
+                <li><strong>Curse of Dimensionality:</strong> Grid search becomes exponentially slow as hyperparameters increase ($K^D$).</li>
+                <li><strong>Random Search:</strong> Explores distinct values on each axis, finding superior configurations in fewer trials.</li>
+                <li><strong>LightGBM 5D:</strong> Demonstrates practical efficiency over learning rate, tree depth, and leaf parameters.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="search-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 08: Learning Curves -->
+    <article class="folder-box" data-target="learning-curves-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 08</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Learning Curves</h2>
+            <p class="folder-desc">Diagnosing high bias vs high variance across dataset sizes and decision tree depth sweeps.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. 3 Model Regimes</span>
+                <span class="topic-pill">2. Training Size N</span>
+                <span class="topic-pill">3. Validation Curve</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 Bias-Variance Curves Insights</h4>
+            <ul>
+                <li><strong>Learning Curve:</strong> Varies training sample size $N$. Answers: "Will gathering more data improve the model?"</li>
+                <li><strong>Validation Curve:</strong> Varies a hyperparameter (e.g. tree depth). Answers: "What is the optimal complexity?"</li>
+                <li><strong>Gap Diagnosis:</strong> High variance keeps a large train-CV gap; high bias plateaus early with both low.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="learning-curves-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 09: Bayesian Optimization -->
+    <article class="folder-box" data-target="bayesopt-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 09</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Bayesian Optimization</h2>
+            <p class="folder-desc">Optuna Tree-structured Parzen Estimator (TPE) vs Random Search across 30 trials with 5-fold CV.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. Optuna TPE</span>
+                <span class="topic-pill">2. Running Best Score</span>
+                <span class="topic-pill">3. Per-Trial Trajectory</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 Bayesian Optimization Insights</h4>
+            <ul>
+                <li><strong>Surrogate Modeling:</strong> Learns probability distribution of top parameters conditioned on past evaluation history.</li>
+                <li><strong>TPE Sampler:</strong> Models good vs poor trials separately to focus sampling on high-probability improvement regions.</li>
+                <li><strong>Exploration vs Exploitation:</strong> Balances testing promising areas against probing unexplored spaces.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="bayesopt-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 10: Calibration & Significance -->
+    <article class="folder-box" data-target="calibration-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 10</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Calibration &amp; Significance</h2>
+            <p class="folder-desc">Probability calibration (Isotonic/Sigmoid), McNemar's paired test, and 2,000 bootstrap AUC difference resamples.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. Reliability Curves</span>
+                <span class="topic-pill">2. McNemar's Test</span>
+                <span class="topic-pill">3. Bootstrap AUC CI</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 Calibration &amp; Significance Insights</h4>
+            <ul>
+                <li><strong>Calibration:</strong> When model predicts 70% probability, exactly 70% of those candidates should be placed.</li>
+                <li><strong>Brier Score:</strong> Mean squared error of probabilities; minimized by well-calibrated confidence.</li>
+                <li><strong>McNemar &amp; Bootstrap:</strong> Evaluates paired disagreement rows to prove real statistical difference vs random noise.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="calibration-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+</section>
+
+<!-- ==================== DETAIL OUTPUT PANELS ==================== -->
+
+<!-- Panel 01: Data Leakage -->
+<section id="leakage-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 01 &bull; SESSION 30 &bull; PIPELINE INTEGRITY</p>
+            <h2>Data Leakage Mechanisms &amp; Inflation Analysis</h2>
+        </div>
+        <span class="status-pill">Strict In-Fold Preprocessing</span>
+    </div>
+
+    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 16px 0;">
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">SCALING LEAKAGE</p>
+            <h4 style="font-size:1.15rem; color:#2563eb; margin:4px 0;">Subtle Bias</h4>
+            <p style="font-size:0.8rem; color:#475569;">Global statistics bleed test info</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">SELECTION LEAKAGE</p>
+            <h4 style="font-size:1.15rem; color:#dc2626; margin:4px 0;">Severe Inflation</h4>
+            <p style="font-size:0.8rem; color:#475569;">Pre-filtering inflates apparent CV</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">PURE NOISE TEST</p>
+            <h4 style="font-size:1.15rem; color:#d97706; margin:4px 0;">Spurious ~80% CV</h4>
+            <p style="font-size:0.8rem; color:#475569;">Leaks target correlation into noise</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">REMEDY</p>
+            <h4 style="font-size:1.15rem; color:#16a34a; margin:4px 0;">sklearn Pipeline</h4>
+            <p style="font-size:0.8rem; color:#475569;">Strictly encapsulate fit inside folds</p>
+        </div>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem; color: #0f172a;">Leakage Inflation Summary Across 3 Demonstrations</h4>
+            <img src="{{ url_for('serve_plot', filename='leakage_inflation_summary.png') }}" alt="Leakage Inflation Summary" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem; color: #0f172a;">Pre-Split Selection vs Noise Inflation Diagnostics</h4>
+            <img src="{{ url_for('serve_plot', filename='selection_and_noise_demos.png') }}" alt="Selection and Noise Demos" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Diagnostic Report (leakage_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in reports.leakage %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 02: Cross-Validation -->
+<section id="cv-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 02 &bull; SESSION 31 &bull; RESAMPLING ESTIMATORS</p>
+            <h2>Cross-Validation Strategies &amp; Fold Variance Analysis</h2>
+        </div>
+        <span class="status-pill">5-Fold Stratified CV</span>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Holdout Seed Variance vs 5-Fold Cross-Validation</h4>
+            <img src="{{ url_for('serve_plot', filename='estimator_error_holdout_vs_cv.png') }}" alt="Holdout vs CV" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Fold Score Variance Across Number of Folds (K)</h4>
+            <img src="{{ url_for('serve_plot', filename='fold_scores_by_k.png') }}" alt="Fold Scores by K" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Stratification Impact on Ordered Student Records</h4>
+            <img src="{{ url_for('serve_plot', filename='stratification_and_sorted_data.png') }}" alt="Stratification" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Train vs CV Score Generalization Gap</h4>
+            <img src="{{ url_for('serve_plot', filename='train_vs_cv_score_gap.png') }}" alt="Train vs CV Gap" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Diagnostic Report (cross_validation_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in reports.cv %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 03: Nested Cross-Validation -->
+<section id="nested-cv-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 03 &bull; SESSION 32 &bull; SELECTION BIAS</p>
+            <h2>Nested Cross-Validation &amp; Selection Optimism</h2>
+        </div>
+        <span class="status-pill">5x3 Nested CV Protocol</span>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Nested vs Non-Nested Error Distribution</h4>
+            <img src="{{ url_for('serve_plot', filename='nested_vs_non_nested_error.png') }}" alt="Nested vs Non-Nested" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Selection Optimism Degradation vs Sample Size</h4>
+            <img src="{{ url_for('serve_plot', filename='selection_optimism_vs_sample_size.png') }}" alt="Selection Optimism vs Sample Size" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Nested CV Inner/Outer Split Protocol</h4>
+            <img src="{{ url_for('serve_plot', filename='nested_cv_structure.png') }}" alt="Nested CV Structure" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Diagnostic Report (nested_cv_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in reports.nested_cv %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 04: Threshold Tuning -->
+<section id="threshold-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 04 &bull; SESSION 33 &bull; DECISION THEORY</p>
+            <h2>Confusion Matrices &amp; Cost-Sensitive Threshold Optimization</h2>
+        </div>
+        <span class="status-pill">Cost Factor C_FN = 5 * C_FP</span>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Confusion Matrices Across Thresholds (0.2, 0.5, 0.8)</h4>
+            <img src="{{ url_for('serve_plot', filename='confusion_matrices_by_threshold.png') }}" alt="Confusion Matrices" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Precision, Recall, F1 vs Threshold Sweep</h4>
+            <img src="{{ url_for('serve_plot', filename='metrics_vs_threshold.png') }}" alt="Metrics vs Threshold" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Cost Curve &amp; Minimum Loss Threshold</h4>
+            <img src="{{ url_for('serve_plot', filename='cost_curve.png') }}" alt="Cost Curve" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Diagnostic Report (threshold_tuning_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in reports.threshold %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 05: ROC & PR Curves -->
+<section id="roc-pr-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 05 &bull; SESSION 34 &bull; DISCRIMINATION METRICS</p>
+            <h2>ROC &amp; Precision-Recall Curves &amp; Class Imbalance</h2>
+        </div>
+        <span class="status-pill">Imbalance Sensitivity Tested</span>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">ROC Curves vs Precision-Recall Curves</h4>
+            <img src="{{ url_for('serve_plot', filename='roc_and_pr_curves.png') }}" alt="ROC and PR Curves" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Sensitivity to Imbalance (10% &amp; 3% Minority Rates)</h4>
+            <img src="{{ url_for('serve_plot', filename='imbalance_sensitivity.png') }}" alt="Imbalance Sensitivity" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Diagnostic Report (roc_pr_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in reports.roc_pr %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 06: Regression Metrics -->
+<section id="regression-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 06 &bull; SESSION 35 &bull; RESIDUAL DIAGNOSTICS</p>
+            <h2>Regression Metrics &amp; Outlier Robustness for Salary Prediction</h2>
+        </div>
+        <span class="status-pill">Huber vs MSE Benchmarked</span>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Residual Diagnostic Plots (Homoscedasticity &amp; QQ Normality)</h4>
+            <img src="{{ url_for('serve_plot', filename='residual_diagnostics.png') }}" alt="Residual Diagnostics" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Loss Metric Degradation Under Heavy Outliers</h4>
+            <img src="{{ url_for('serve_plot', filename='outlier_robustness.png') }}" alt="Outlier Robustness" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Diagnostic Report (regression_metrics_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in reports.regression %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 07: Grid vs Random Search -->
+<section id="search-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 07 &bull; SESSION 36 &bull; OPTIMIZATION BENCHMARK</p>
+            <h2>Grid Search vs Random Search Efficiency</h2>
+        </div>
+        <span class="status-pill">Equal Evaluation Budget</span>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Experiment A: 2D Decision Tree Parameter Space</h4>
+            <img src="{{ url_for('serve_plot', filename='experiment_a_two_params.png') }}" alt="2D Search Comparison" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Experiment B: 5D LightGBM Hyperparameter Tuning</h4>
+            <img src="{{ url_for('serve_plot', filename='experiment_b_five_params.png') }}" alt="5D Search Comparison" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Diagnostic Report (search_comparison_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in reports.search %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 08: Learning Curves -->
+<section id="learning-curves-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 08 &bull; SESSION 37 &bull; BIAS-VARIANCE DIAGNOSTICS</p>
+            <h2>Learning &amp; Validation Curves</h2>
+        </div>
+        <span class="status-pill">3 Complexity Regimes Tested</span>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Learning Curves Across 3 Bias/Variance Regimes</h4>
+            <img src="{{ url_for('serve_plot', filename='learning_curves_three_models.png') }}" alt="Learning Curves" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Validation Curve: Decision Tree Max Depth Sweep</h4>
+            <img src="{{ url_for('serve_plot', filename='validation_curve_tree_depth.png') }}" alt="Validation Curve" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Diagnostic Report (learning_curves_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in reports.learning_curves %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 09: Bayesian Optimization -->
+<section id="bayesopt-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 09 &bull; SESSION 38 &bull; SEQUENTIAL SURROGATE</p>
+            <h2>Bayesian Optimization (Optuna TPE) vs Random Search</h2>
+        </div>
+        <span class="status-pill">30-Trial Identical Budget</span>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Running Best CV Score Trajectory (30 Trials)</h4>
+            <img src="{{ url_for('serve_plot', filename='running_best_comparison.png') }}" alt="Running Best Comparison" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Per-Trial Score Scatter (TPE Exploration vs Exploitation)</h4>
+            <img src="{{ url_for('serve_plot', filename='per_trial_scores.png') }}" alt="Per Trial Scores" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Diagnostic Report (bayesian_optimization_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in reports.bayesopt %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 10: Calibration & Significance -->
+<section id="calibration-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 10 &bull; SESSION 39 &bull; STATISTICAL CONFIDENCE</p>
+            <h2>Calibration &amp; Statistical Significance Testing</h2>
+        </div>
+        <span class="status-pill">McNemar's Test &amp; 2,000 Bootstraps</span>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Probability Reliability Curves (Raw vs Calibrated LightGBM)</h4>
+            <img src="{{ url_for('serve_plot', filename='reliability_curves.png') }}" alt="Reliability Curves" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">McNemar Paired Table &amp; 95% Bootstrap AUC CI</h4>
+            <img src="{{ url_for('serve_plot', filename='significance_tests.png') }}" alt="Significance Tests" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Diagnostic Report (calibration_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in reports.calibration %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Interactive Folder Accordion Navigation Script -->
+<script>
+    function openFolder(targetId, shouldScroll) {
+        document.querySelectorAll(".folder-panel").forEach((panel) => {
+            panel.hidden = true;
+        });
+
+        document.querySelectorAll(".folder-box").forEach((box) => {
+            box.classList.remove("folder-open");
+            const btnText = box.querySelector(".btn-text");
+            if (btnText) {
+                btnText.textContent = "Show Data";
+            }
+        });
+
+        const activePanel = document.getElementById(targetId);
+        if (activePanel) {
+            activePanel.hidden = false;
+        }
+
+        const activeBox = document.querySelector(`.folder-box[data-target="${targetId}"]`);
+        if (activeBox) {
+            activeBox.classList.add("folder-open");
+            const btnText = activeBox.querySelector(".btn-text");
+            if (btnText) btnText.textContent = "Hide Section";
+        }
+
+        if (shouldScroll && activePanel) {
+            activePanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
+
+    function toggleFolder(box, event) {
+        if (event) event.stopPropagation();
+        const targetId = box.dataset.target;
+        const panel = document.getElementById(targetId);
+        if (!panel) return;
+
+        if (!panel.hidden) {
+            panel.hidden = true;
+            box.classList.remove("folder-open");
+            const btnText = box.querySelector(".btn-text");
+            if (btnText) btnText.textContent = "Show Data";
+        } else {
+            openFolder(targetId, true);
+        }
+    }
+
+    document.querySelectorAll(".folder-box").forEach((box) => {
+        const button = box.querySelector(".show-folder-btn");
+        if (button) {
+            button.addEventListener("click", (e) => toggleFolder(box, e));
+        }
+        box.addEventListener("click", (e) => {
+            if (!e.target.closest(".folder-popup") && !e.target.closest(".show-folder-btn") && !e.target.closest("input") && !e.target.closest("button")) {
+                toggleFolder(box, e);
+            }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const activeFolder = "{{ active_folder|default('leakage-output') }}";
+        if (activeFolder && document.getElementById(activeFolder)) {
+            openFolder(activeFolder, false);
+        }
+    });
+</script>
+{% endblock %}

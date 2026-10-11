@@ -556,6 +556,16 @@ def boosting_models_page():
     )
 
 
+def read_report_lines(filename):
+    file_path = config.REPORTS_DIR / filename
+    if file_path.exists():
+        return file_path.read_text(encoding="utf-8").splitlines()
+    alt_path = config.PLOTS_DIR / filename
+    if alt_path.exists():
+        return alt_path.read_text(encoding="utf-8").splitlines()
+    return []
+
+
 @app.route("/unsupervised", methods=["GET", "POST"])
 def unsupervised_learning_page():
     raw_df = load_data(current_dataset_path())
@@ -566,15 +576,14 @@ def unsupervised_learning_page():
     active_folder = request.args.get("folder", "kmeans-output")
     
     # Read text reports if available
-    km_report_lines = None
-    km_rep_file = config.REPORTS_DIR / "kmeans_report.txt"
-    if km_rep_file.exists():
-        km_report_lines = km_rep_file.read_text(encoding="utf-8").splitlines()
-        
-    hier_report_lines = None
-    hier_rep_file = config.REPORTS_DIR / "hierarchical_report.txt"
-    if hier_rep_file.exists():
-        hier_report_lines = hier_rep_file.read_text(encoding="utf-8").splitlines()
+    km_report_lines = read_report_lines("kmeans_report.txt")
+    hier_report_lines = read_report_lines("hierarchical_report.txt")
+    pca_report_lines = read_report_lines("pca_report.txt")
+    dbscan_report_lines = read_report_lines("dbscan_report.txt")
+    tsne_report_lines = read_report_lines("tsne_report.txt")
+    umap_report_lines = read_report_lines("umap_report.txt")
+    anomaly_report_lines = read_report_lines("anomaly_report.txt")
+    cluster_aug_report_lines = read_report_lines("cluster_augmentation_report.txt")
         
     return render_template(
         "clustering.html",
@@ -589,6 +598,41 @@ def unsupervised_learning_page():
         active_folder=active_folder,
         km_report_lines=km_report_lines,
         hier_report_lines=hier_report_lines,
+        pca_report_lines=pca_report_lines,
+        dbscan_report_lines=dbscan_report_lines,
+        tsne_report_lines=tsne_report_lines,
+        umap_report_lines=umap_report_lines,
+        anomaly_report_lines=anomaly_report_lines,
+        cluster_aug_report_lines=cluster_aug_report_lines,
+    )
+
+
+@app.route("/evaluation", methods=["GET"])
+def evaluation_page():
+    raw_df = load_data(current_dataset_path())
+    cleaned_df, duplicate_count = clean_data(raw_df, save=False)
+    active_folder = request.args.get("folder", "leakage-output")
+    
+    reports = {
+        "leakage": read_report_lines("leakage_report.txt"),
+        "cv": read_report_lines("cross_validation_report.txt"),
+        "nested_cv": read_report_lines("nested_cv_report.txt"),
+        "threshold": read_report_lines("threshold_tuning_report.txt"),
+        "roc_pr": read_report_lines("roc_pr_report.txt"),
+        "regression": read_report_lines("regression_metrics_report.txt"),
+        "search": read_report_lines("search_comparison_report.txt"),
+        "learning_curves": read_report_lines("learning_curves_report.txt"),
+        "bayesopt": read_report_lines("bayesian_optimization_report.txt"),
+        "calibration": read_report_lines("calibration_report.txt"),
+    }
+    
+    return render_template(
+        "evaluation.html",
+        dataset_name=session.get("dataset_name", "Placement prediction dataset"),
+        cleaned_shape=cleaned_df.shape,
+        duplicate_count=duplicate_count,
+        active_folder=active_folder,
+        reports=reports,
     )
 
 

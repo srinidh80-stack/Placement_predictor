@@ -20,12 +20,13 @@
             <p class="sidebar-label">WORKSPACE</p>
             <h2>Analysis menu</h2>
 
-            <a class="menu-btn" href="{{ url_for('load_page') }}">Load Data</a>
-            <a class="menu-btn" href="{{ url_for('eda_page') }}">EDA Dashboard</a>
-            <a class="menu-btn" href="{{ url_for('feature_engg_page') }}">Feature Engg</a>
-            <a class="menu-btn" href="{{ url_for('tree_models_page') }}">Tree Models</a>
-            <a class="menu-btn" href="{{ url_for('boosting_models_page') }}">Boosting Models</a>
-            <a class="menu-btn" href="{{ url_for('unsupervised_learning_page') }}">Unsupervised Learning</a>
+            <a class="menu-btn {% if request.path == url_for('load_page') %}active{% endif %}" href="{{ url_for('load_page') }}">Load Data</a>
+            <a class="menu-btn {% if request.path.startswith('/eda') %}active{% endif %}" href="{{ url_for('eda_page') }}">EDA Dashboard</a>
+            <a class="menu-btn {% if request.path.startswith('/feature-engg') %}active{% endif %}" href="{{ url_for('feature_engg_page') }}">Feature Engg</a>
+            <a class="menu-btn {% if request.path.startswith('/tree_models') or request.path.startswith('/tree-models') %}active{% endif %}" href="{{ url_for('tree_models_page') }}">Tree Models</a>
+            <a class="menu-btn {% if request.path.startswith('/boosting') %}active{% endif %}" href="{{ url_for('boosting_models_page') }}">Boosting Models</a>
+            <a class="menu-btn {% if request.path.startswith('/unsupervised') %}active{% endif %}" href="{{ url_for('unsupervised_learning_page') }}">Unsupervised Learning</a>
+            <a class="menu-btn {% if request.path.startswith('/evaluation') %}active{% endif %}" href="{{ url_for('evaluation_page') }}">Evaluation</a>
         </aside>
 
         <main class="content">

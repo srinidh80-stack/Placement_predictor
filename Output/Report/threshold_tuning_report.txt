@@ -1,0 +1,22 @@
+CONFUSION MATRIX & DECISION THRESHOLD TUNING REPORT
+================================================================================
+
+Evaluated on 5,001 validation rows (65.7% placed base rate).
+
+1. Default Threshold (0.50):
+   TP=3134  FP=230  FN=152  TN=1485
+   Precision=0.9316  Recall=0.9537  F1=0.9426  Accuracy=0.9236
+
+2. Maximize F1-Score Strategy:
+   Optimal threshold: 0.420 (Achieved F1: 0.9440)
+
+3. Asymmetric Cost Minimization (FN cost = 3x, FP cost = 1x):
+   Optimal threshold: 0.220
+   Cost at optimal: 536 vs 686 at default (+21.9% savings)
+
+4. Guaranteed Recall Floor (Recall >= 95%):
+   Optimal threshold: 0.510 (Recall: 0.9501, Precision: 0.9328)
+
+Takeaway & Production Guidance:
+  - 0.50 is purely an arbitrary statistical convention, not an optimal decision rule.
+  - Changing thresholds calibrates real-world utility without needing to retrain models.

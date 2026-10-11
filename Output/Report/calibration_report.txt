@@ -1,0 +1,20 @@
+Calibration and statistical significance, 5,001 validation rows (65.7% placed)
+
+Part 1: Calibration (LightGBM)
+  Raw LightGBM           Brier 0.0518   ROC AUC 0.9817
+  Isotonic-calibrated    Brier 0.0520   ROC AUC 0.9815
+  Sigmoid-calibrated     Brier 0.0518   ROC AUC 0.9817
+  Best-calibrated variant by Brier score: Sigmoid-calibrated (-0.1% lower Brier than raw)
+
+Part 2: Statistical significance, Logistic Regression vs LightGBM
+  Logistic Regression: accuracy 0.9078   ROC AUC 0.9733
+  LightGBM:             accuracy 0.9236   ROC AUC 0.9817
+
+  McNemar's test: both correct 4,451, both wrong 293, LogReg-only-right 89, LightGBM-only-right 168
+  Chi-square (continuity-corrected) 23.673, p-value 1.142e-06
+  Paired bootstrap AUC difference (LightGBM - LogReg): point +0.0084, 95% CI [+0.0063, +0.0106]
+
+Guidance:
+  - Calibration and ranking quality (ROC AUC) evaluate distinct aspects of performance.
+  - Paired statistical tests (McNemar and paired bootstrap) provide rigorous confidence
+    intervals when determining whether a model is genuinely superior vs chance variation.

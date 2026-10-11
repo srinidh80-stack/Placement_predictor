@@ -1,5 +1,5 @@
 ======================================================================
-MODULE 4 Â· SESSION 24: HIERARCHICAL CLUSTERING REPORT
+MODULE 4 · SESSION 24: HIERARCHICAL CLUSTERING REPORT
 Course: Machine Learning (25SC2107E) | Placement Prediction Dataset
 ======================================================================
 

@@ -2,7 +2,10 @@ MODERN BOOSTED TREES BENCHMARK REPORT (50,000 PLACEMENT RECORDS)
 ===========================================================================
 Framework              Accuracy     F1         ROC-AUC      Train Time   Latency
 ---------------------------------------------------------------------------
-Scikit-Learn HistGB     90.88%      93.17%     97.32%      1.869s      0.004ms
+XGBoost                 91.06%      93.32%     97.34%      0.329s      0.001ms
+LightGBM                90.93%      93.21%     97.35%      0.179s      0.003ms
+CatBoost                91.05%      93.31%     97.36%      0.764s      0.001ms
+Scikit-Learn HistGB     90.88%      93.17%     97.32%      0.470s      0.005ms
 
 Generated Plots:
   - modern_boosting_comparison.png

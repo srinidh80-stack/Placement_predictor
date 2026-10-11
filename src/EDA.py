@@ -45,7 +45,7 @@ def _plot_histogram(data, column, filename, title, bins=20):
 
 def _plot_boxplot(data, value_column, category_column, filename, title):
     fig, ax = plt.subplots(figsize=(7, 4))
-    sns.boxplot(data=data, x=category_column, y=value_column, hue=category_column, legend=False, ax=ax, palette="Set2", orient="v")
+    sns.boxplot(data=data, x=category_column, y=value_column, hue=category_column, legend=False, ax=ax, palette="Set2")
     ax.set_title(title)
     ax.set_xlabel(category_column)
     ax.set_ylabel(value_column)

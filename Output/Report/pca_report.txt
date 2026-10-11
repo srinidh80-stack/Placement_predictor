@@ -1,0 +1,83 @@
+================================================================================
+MODULE 4 · SESSION 23: PRINCIPAL COMPONENT ANALYSIS (PCA) REPORT
+Course: Machine Learning (25SC2107E) | Placement Prediction Dataset
+Reference: M4-Session4-PCA.pptx & 23_principal_component_analysis.py
+================================================================================
+
+1. HAND-WORKED NUMERICAL EXAMPLE VERIFICATION (SLIDES 8 & 12):
+   Input 10 points in 2-D | Mean: [1.81 1.91]
+   Sample Covariance Matrix Sigma = (1/(n-1)) X_c^T X_c:
+     [[0.6166, 0.6154],
+      [0.6154, 0.7166]]
+   Eigenvalues: lambda1 = 1.2840, lambda2 = 0.0491
+   PC1 direction vector v1: (0.6779, 0.7352)
+   Explained variance ratio: PC1 = 96.3%, PC2 = 3.7%
+   Verification check: Matches slide 8 & 12 benchmarks exactly.
+
+2. STANDARDIZATION PITFALL DEMONSTRATION (SLIDES 11 & 13):
+   - Raw Unscaled PCA: Income feature dominates completely:
+     Explained Variance: [1.0, 0.0, 0.0] (100.0% on PC1)
+   - StandardScaler PCA: Meaningful, balanced decomposition:
+     Explained Variance: [0.6648, 0.332, 0.0032] (66.5% PC1, 33.2% PC2)
+   Lesson: Always scale features to unit variance before PCA unless sharing identical units.
+
+3. PLACEMENT PREDICTION DATASET SPECTRUM (50,000 Students):
+   Input features: 11 standardized numeric metrics
+   Variance explained by first 10 components:
+     PC1 : 63.41%  (cumulative: 63.41%)
+     PC2 :  6.16%  (cumulative: 69.57%)
+     PC3 :  4.91%  (cumulative: 74.47%)
+     PC4 :  4.44%  (cumulative: 78.91%)
+     PC5 :  3.75%  (cumulative: 82.66%)
+     PC6 :  3.66%  (cumulative: 86.32%)
+     PC7 :  3.31%  (cumulative: 89.63%)
+     PC8 :  3.11%  (cumulative: 92.74%)
+     PC9 :  2.83%  (cumulative: 95.57%)
+     PC10:  2.43%  (cumulative: 98.00%)
+
+   Components needed for common variance thresholds:
+     80% cumulative variance: 5 components
+     90% cumulative variance: 8 components
+     95% cumulative variance: 9 components
+
+   PC1 + PC2 together capture: 69.6% of total variance
+   (This is the exact number that backed the 2D cluster scatter plots
+    in Sessions 21 & 24 - now explicitly quantified).
+
+4. FEATURE LOADINGS INTERPRETATION (WHAT PC1 & PC2 REPRESENT):
+   Top features contributing to PC1 (by absolute loading):
+     CodingTestScore       :   0.330
+     MockInterviewScore    :   0.324
+     Certifications        :   0.316
+     Projects              :   0.312
+     AptitudeTestScore     :   0.305
+     AttendancePercent     :   0.300
+
+   Top features contributing to PC2 (by absolute loading):
+     Publications          :   0.493
+
+     CGPA                  :  -0.471
+
+     AptitudeTestScore     :  -0.379
+
+     Workshops             :   0.307
+
+     SoftSkillsRating      :   0.290
+
+     CodingTestScore       :  -0.274
+
+5. PRODUCTION PIPELINE BENCHMARK (SLIDE 10):
+   Full Features (11): Accuracy = 99.78%, ROC-AUC = 0.9015
+   PCA Pipeline  (8 PCs): Accuracy = 99.81%, ROC-AUC = 0.8646
+   Compression Ratio: Retains predictive power while eliminating multicollinearity.
+
+6. COMPARISON: PCA vs LINEAR REGRESSION (SLIDE 14):
+   ---------------------------------------------------------------------------
+   Aspect                    | PCA                    | Linear Regression     
+   ---------------------------------------------------------------------------
+   Learning Type             | Unsupervised           | Supervised            
+   Goal                      | Retain variance        | Predict target y      
+   Input Needed              | Features only (no labels) | Features X and target y
+   Objective                 | Maximize variance (v^T Sigma v) | Minimize squared residuals
+   Underlying Tool           | Covariance eigen-decomp | Normal equations / SGD
+   ---------------------------------------------------------------------------

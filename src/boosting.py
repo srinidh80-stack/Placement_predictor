@@ -124,13 +124,9 @@ def generate_boosting_diagrams(model_data=None, df=None):
     # DIAGRAM 1: Staged Validation Accuracy Curve Across Boosting Rounds
     # -------------------------------------------------------------
     fig, ax = plt.subplots(figsize=(8.5, 4.8), dpi=120)
-    import warnings
     
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore", category=UserWarning)
-        ada_staged = [accuracy_score(y_test, pred) * 100 for pred in adaboost.staged_predict(X_test)]
-        gb_staged = [accuracy_score(y_test, pred) * 100 for pred in gb.staged_predict(X_test)]
-        
+    ada_staged = [accuracy_score(y_test, pred) * 100 for pred in adaboost.staged_predict(X_test)]
+    gb_staged = [accuracy_score(y_test, pred) * 100 for pred in gb.staged_predict(X_test)]
     rounds = list(range(1, len(ada_staged) + 1))
     
     ax.plot(rounds, ada_staged, color="#3a6b88", linewidth=2.2, label=f"AdaBoost (Final: {ada_staged[-1]:.2f}%)")
@@ -161,9 +157,7 @@ def generate_boosting_diagrams(model_data=None, df=None):
     for lr, col in zip(lrs, lr_colors):
         temp_gb = GradientBoostingClassifier(n_estimators=60, learning_rate=lr, max_depth=2, random_state=42)
         temp_gb.fit(X_sub, y_sub)
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=UserWarning)
-            scores = [accuracy_score(y_test, p) * 100 for p in temp_gb.staged_predict(X_test)]
+        scores = [accuracy_score(y_test, p) * 100 for p in temp_gb.staged_predict(X_test)]
         ax.plot(range(1, len(scores) + 1), scores, label=f"lr = {lr}", color=col, linewidth=1.8)
         
     ax.set_title("Gradient Boosting: Learning Rate (Shrinkage) vs Accuracy", fontsize=11, weight="bold", color="#21312f", pad=12)

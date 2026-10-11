@@ -1,0 +1,37 @@
+Learning and validation curves, 34,999 training rows, 5-fold CV
+
+Logistic Regression:
+  At smallest size (1399): train 0.9175, CV 0.9092, gap +0.0083
+  At full size (27999):   train 0.9151, CV 0.9144, gap +0.0008
+  CV improvement, smallest to largest: +0.0051
+
+Decision tree, depth=2:
+  At smallest size (1399): train 0.8798, CV 0.8715, gap +0.0083
+  At full size (27999):   train 0.8774, CV 0.8772, gap +0.0002
+  CV improvement, smallest to largest: +0.0057
+
+Decision tree, unconstrained:
+  At smallest size (1399): train 1.0000, CV 0.8731, gap +0.1269
+  At full size (27999):   train 1.0000, CV 0.8893, gap +0.1107
+  CV improvement, smallest to largest: +0.0162
+
+Validation curve (decision tree depth, full training set):
+  depth=1     train 0.8569  CV 0.8569  gap -0.0000
+  depth=2     train 0.8774  CV 0.8772  gap +0.0002
+  depth=3     train 0.8922  CV 0.8915  gap +0.0007
+  depth=4     train 0.8961  CV 0.8947  gap +0.0014
+  depth=5     train 0.9053  CV 0.9029  gap +0.0025
+  depth=6     train 0.9149  CV 0.9116  gap +0.0034
+  depth=8     train 0.9248  CV 0.9119  gap +0.0130
+  depth=10    train 0.9369  CV 0.9107  gap +0.0261
+  depth=15    train 0.9743  CV 0.8936  gap +0.0807
+  depth=20    train 0.9951  CV 0.8909  gap +0.1042
+  depth=None  train 1.0000  CV 0.8891  gap +0.1109
+Best depth by CV score: 8 (CV 0.9119)
+
+How to tell the two plots apart and when to use each:
+  - Learning curve: x-axis is training set SIZE, hyperparameters fixed. Answers 'would more data help?'
+  - Validation curve: x-axis is a HYPERPARAMETER, training set size fixed. Answers 'how complex should
+    the model be, given the data already in hand?'
+  - A high-bias model's learning curve plateaus early with train and CV close together and both low.
+  - A high-variance model's learning curve keeps a wide train-CV gap even at full data size.

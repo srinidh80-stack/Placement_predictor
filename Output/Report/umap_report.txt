@@ -1,0 +1,59 @@
+================================================================================
+MODULE 4 · SESSION 5: UMAP (UNIFORM MANIFOLD APPROXIMATION AND PROJECTION) REPORT
+Course: Machine Learning (25SC2107E) | Placement Prediction Dataset
+Reference: M4-Session5-TSNE_UMAP.pptx
+================================================================================
+
+1. WORKED NUMERICAL EXAMPLE VERIFICATION (SLIDE 13 & 18):
+   Dataset points: A=0, B=1, C=5, D=6 (1-D, k=3 neighbors)
+   Local connectivity rho: {'rho_A': 1.0, 'rho_B': 1.0, 'rho_C': 1.0, 'rho_D': 1.0}
+   Local scale sigma:      {'sigma_A': 3.633, 'sigma_B': 2.811, 'sigma_C': 2.811, 'sigma_D': 3.633}
+   Verification check: Matches slide 13 benchmark exactly:
+     sigma_A = sigma_D = 3.633; sigma_B = sigma_C = 2.811
+   Symmetrized fuzzy union memberships w_ij:
+     w(A,B) = 1.00
+     w(C,D) = 1.00
+     w(A,C) = 0.49
+     w(A,D) = 0.44
+     w(B,C) = 0.57
+     w(B,D) = 0.49
+   Observation: Tight pairs get weight 1.00; cross-pair links get 0.44-0.57.
+
+2. HYPERPARAMETER GRID TIMINGS (SLIDE 14 & 18):
+   Train samples: 3,000 | Features: 10
+   (n_neighbors, min_dist)    | Fit Time (s)  
+   ------------------------------------------
+   (5  , 0.0)                 | 23.10         
+   (5  , 0.5)                 | 10.98         
+   (15 , 0.0)                 | 12.54         
+   (15 , 0.5)                 | 12.47         
+   (50 , 0.0)                 | 15.12         
+   (50 , 0.5)                 | 14.83         
+
+3. OUT-OF-SAMPLE EMBEDDING VIA TRANSFORM() (SLIDE 16):
+   Primary fit on train set (N=3,000):      12.91s
+   Projecting held-out test set (N=500):  7.89s
+   Key takeaway: Unlike t-SNE (which requires full retraining for new data),
+   UMAP supports transform() for real-time inference and out-of-sample projection.
+
+4. COMPARATIVE SUMMARY: t-SNE vs UMAP (SLIDE 16):
+   ---------------------------------------------------------------------------
+   Aspect                    | t-SNE                  | UMAP                  
+   ---------------------------------------------------------------------------
+   Mathematical Basis        | Probability / KL Div   | Topology / Fuzzy Sets 
+   Speed on Large Data       | Slower (O(N^2))        | Substantially faster  
+   Global Structure          | Largely not preserved  | Somewhat better preserved
+   Key Hyperparameters       | perplexity             | n_neighbors, min_dist 
+   New-point Embedding       | Must re-run on full data | Supports transform()  
+   ---------------------------------------------------------------------------
+
+5. COMPARISON WITH LINEAR REGRESSION (SLIDE 19):
+   ---------------------------------------------------------------------------
+   Aspect                    | t-SNE / UMAP           | Linear Regression     
+   ---------------------------------------------------------------------------
+   Learning Type             | Unsupervised           | Supervised            
+   Goal                      | Visualize high-D in 2D | Predict continuous y  
+   Input Needed              | Features only (no label) | Features X and target y
+   Output                    | 2D/3D plot coordinates | Predicted numeric value
+   Distances                 | Only LOCAL meaningful  | Directly meaningful   
+   ---------------------------------------------------------------------------

@@ -104,6 +104,186 @@
             </button>
         </div>
     </article>
+
+    <!-- Folder 03: Clustering Feature Augmentation -->
+    <article class="folder-box" data-target="cluster-augment-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 03</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Feature Augmentation</h2>
+            <p class="folder-desc">Third group: Enhancing supervised models with cluster assignments and centroid distance vectors.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. Distance Features</span>
+                <span class="topic-pill">2. Linear Gain</span>
+                <span class="topic-pill">3. Tree Impact</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 Feature Augmentation Insights</h4>
+            <ul>
+                <li><strong>Radial Distances:</strong> Distance-to-centroid features linearize complex non-linear neighborhoods for linear models.</li>
+                <li><strong>Tree vs Linear:</strong> Decision trees already find axis-aligned cuts, so linear models gain more substantial boost.</li>
+                <li><strong>Zero Leakage:</strong> Fitted strictly on training folds to prevent target information bleeding.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="cluster-augment-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 04: Principal Component Analysis (PCA) -->
+    <article class="folder-box" data-target="pca-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 04</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>PCA Dimensionality</h2>
+            <p class="folder-desc">Fourth group: Scree plot, cumulative variance explained, 2D placement projection, and loading biplot.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. Scree Plot</span>
+                <span class="topic-pill">2. 2D Projection</span>
+                <span class="topic-pill">3. Feature Loadings</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 PCA Insights</h4>
+            <ul>
+                <li><strong>Variance Maximization:</strong> Orthogonal axes capturing maximum geometric spread across skills and academics.</li>
+                <li><strong>Standardization Pitfall:</strong> Features must be standardized so high-scale variables don't dominate variance.</li>
+                <li><strong>Biplot Loadings:</strong> Visualizes which academic scores drive PC1 and PC2.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="pca-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 05: DBSCAN Clustering -->
+    <article class="folder-box" data-target="dbscan-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 05</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>DBSCAN Density</h2>
+            <p class="folder-desc">Fifth group: k-distance elbow curve, density reachability, arbitrary shapes, and noise detection.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. k-Distance Elbow</span>
+                <span class="topic-pill">2. Noise Isolation</span>
+                <span class="topic-pill">3. Two-Moons Test</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 DBSCAN Insights</h4>
+            <ul>
+                <li><strong>Density Reachability:</strong> Core points with $\ge \text{min\_samples}$ within $\epsilon$ radius.</li>
+                <li><strong>Noise Robustness:</strong> Isolates atypical records without forcing them into artificial clusters.</li>
+                <li><strong>Arbitrary Shapes:</strong> Captures non-spherical geometric structures where K-Means fails.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="dbscan-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 06: t-SNE Projection -->
+    <article class="folder-box" data-target="tsne-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 06</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>t-SNE Manifold</h2>
+            <p class="folder-desc">Sixth group: Non-linear manifold embedding, Student-t heavy tails, and perplexity sweep diagnostics.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. Placement 2D</span>
+                <span class="topic-pill">2. Perplexity Sweep</span>
+                <span class="topic-pill">3. Distortion Trap</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 t-SNE Insights</h4>
+            <ul>
+                <li><strong>Local Neighborhoods:</strong> Minimizes KL divergence between high-D Gaussian and low-D Student-t distributions.</li>
+                <li><strong>Crowding Problem:</strong> Solved by Student-t distribution's inverse-square heavy tail.</li>
+                <li><strong>Pitfall:</strong> Cluster sizes and distances in t-SNE are non-linear artifacts, not absolute physical distances.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="tsne-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 07: UMAP Projection -->
+    <article class="folder-box" data-target="umap-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 07</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>UMAP Projection</h2>
+            <p class="folder-desc">Seventh group: Riemannian geometry, fuzzy simplicial sets, and out-of-sample projection transform.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. 2D Placement</span>
+                <span class="topic-pill">2. n_neighbors Grid</span>
+                <span class="topic-pill">3. New Point Transform</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 UMAP Insights</h4>
+            <ul>
+                <li><strong>Topological Manifolds:</strong> Better preserves global continuum structure compared to t-SNE.</li>
+                <li><strong>Out-of-Sample Transform:</strong> Enables projecting newly enrolled candidate records into fitted manifold.</li>
+                <li><strong>Fuzzy Simplicial Sets:</strong> Algebraic topology formulation offering orders of magnitude faster execution.</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="umap-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
+
+    <!-- Folder 08: Anomaly Detection -->
+    <article class="folder-box" data-target="anomaly-output">
+        <div>
+            <div class="folder-header">
+                <span class="folder-badge">📁 Folder 08</span>
+                <span class="hover-tip">Hover for details ℹ️</span>
+            </div>
+            <h2>Anomaly Detection</h2>
+            <p class="folder-desc">Eighth group: Isolation Forest, random recursive partitioning, anomaly scores, and profile audits.</p>
+            <div class="folder-topics">
+                <span class="topic-pill">1. Isolation Trees</span>
+                <span class="topic-pill">2. Score Distribution</span>
+                <span class="topic-pill">3. Student Profiles</span>
+            </div>
+        </div>
+        <div class="folder-popup">
+            <h4>💡 Anomaly Detection Insights</h4>
+            <ul>
+                <li><strong>Isolation Mechanism:</strong> Anomalies require fewer random splits to isolate in shallow tree branches.</li>
+                <li><strong>Path Length Metric:</strong> Normalized path length $c(n)$ directly yields an anomaly probability score.</li>
+                <li><strong>Audit Archetypes:</strong> Detects discordant profiles (e.g. high CGPA with zero test scores or anomalous backlogs).</li>
+            </ul>
+        </div>
+        <div class="folder-footer">
+            <button class="show-folder-btn" type="button" data-target="anomaly-output">
+                <span>👁️</span> <span class="btn-text">Show Data</span>
+            </button>
+        </div>
+    </article>
 </section>
 
 <!-- ==================== DETAIL OUTPUT PANELS ==================== -->
@@ -362,6 +542,239 @@
             {% else %}
                 <p>Hierarchical report not found.</p>
             {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 03: Clustering Feature Augmentation Details -->
+<section id="cluster-augment-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 03 &bull; SESSION 29 &bull; SUPERVISED FEATURE AUGMENTATION</p>
+            <h2>Clustering-Based Feature Augmentation Benchmark</h2>
+        </div>
+        <span class="status-pill">Non-Linear Boundary Linearization</span>
+    </div>
+
+    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 16px 0;">
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">AUGMENTATION TYPE</p>
+            <h4 style="font-size:1.15rem; color:#0f766e; margin:4px 0;">K-Means &amp; GMM</h4>
+            <p style="font-size:0.8rem; color:#475569;">Cluster IDs + Centroid Distances</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">LINEAR BENEFIT</p>
+            <h4 style="font-size:1.15rem; color:#2563eb; margin:4px 0;">Noticeable Gain</h4>
+            <p style="font-size:0.8rem; color:#475569;">Linearizes cluster neighborhoods</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">TREE BENEFIT</p>
+            <h4 style="font-size:1.15rem; color:#d97706; margin:4px 0;">Marginal Gain</h4>
+            <p style="font-size:0.8rem; color:#475569;">Trees already cut axis-aligned regions</p>
+        </div>
+        <div class="stat-card" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="font-size:0.75rem; color:#64748b; font-weight:700;">LEAKAGE DISCIPLINE</p>
+            <h4 style="font-size:1.15rem; color:#16a34a; margin:4px 0;">Strict In-Fold Fit</h4>
+            <p style="font-size:0.8rem; color:#475569;">Clusters fit on train split only</p>
+        </div>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem; color: #0f172a;">Raw vs Cluster-Augmented Model Comparison</h4>
+            <img src="{{ url_for('serve_plot', filename='augmentation_comparison.png') }}" alt="Augmentation Comparison" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem; color: #0f172a;">Bootstrapped Confidence Intervals of Improvement</h4>
+            <img src="{{ url_for('serve_plot', filename='improvement_confidence_intervals.png') }}" alt="Confidence Intervals" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Session 29 Diagnostic Report (cluster_augmentation_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in cluster_aug_report_lines %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 04: PCA Details -->
+<section id="pca-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 04 &bull; SESSION 23 &bull; DIMENSIONALITY REDUCTION</p>
+            <h2>Principal Component Analysis (PCA) &amp; Variance Decomposition</h2>
+        </div>
+        <span class="status-pill">Standardized Covariance Eigenanalysis</span>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Scree Plot &amp; Cumulative Explained Variance</h4>
+            <img src="{{ url_for('serve_plot', filename='scree_and_cumulative_variance.png') }}" alt="Scree Plot" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">2D PCA Projection Colored by Placement Status</h4>
+            <img src="{{ url_for('serve_plot', filename='pca_2d_by_placement.png') }}" alt="2D PCA Projection" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Feature Loadings Biplot (PC1 vs PC2 Drivers)</h4>
+            <img src="{{ url_for('serve_plot', filename='loadings_biplot.png') }}" alt="Loadings Biplot" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Standardization Pitfall &amp; Geometric Variance</h4>
+            <img src="{{ url_for('serve_plot', filename='pca_theory_and_pitfall.png') }}" alt="PCA Theory and Pitfall" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Session 23 Diagnostic Report (pca_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in pca_report_lines %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 05: DBSCAN Details -->
+<section id="dbscan-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 05 &bull; SESSION 25 &bull; DENSITY PARTITIONING</p>
+            <h2>DBSCAN Density-Based Clustering &amp; Outlier Filtering</h2>
+        </div>
+        <span class="status-pill">Non-Parametric Density Reachability</span>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">k-Distance Graph for Optimal Epsilon Selection</h4>
+            <img src="{{ url_for('serve_plot', filename='dbscan_k_distance_elbow.png') }}" alt="k-Distance Elbow" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Placement Feature Space Clusters &amp; Noise Points</h4>
+            <img src="{{ url_for('serve_plot', filename='dbscan_placement_clusters.png') }}" alt="DBSCAN Clusters" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Arbitrary Shape Comparison: Two Moons vs K-Means</h4>
+            <img src="{{ url_for('serve_plot', filename='dbscan_two_moons_vs_kmeans.png') }}" alt="Two Moons vs KMeans" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Worked Example: Core, Border, and Noise Points</h4>
+            <img src="{{ url_for('serve_plot', filename='dbscan_worked_example.png') }}" alt="DBSCAN Worked Example" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Session 25 Diagnostic Report (dbscan_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in dbscan_report_lines %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 06: t-SNE Details -->
+<section id="tsne-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 06 &bull; SESSION 26 &bull; MANIFOLD LEARNING</p>
+            <h2>t-Distributed Stochastic Neighbor Embedding (t-SNE)</h2>
+        </div>
+        <span class="status-pill">KL Divergence Stochastic Optimization</span>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">2D Student Manifold Projection Colored by Placement</h4>
+            <img src="{{ url_for('serve_plot', filename='tsne_placement_projection.png') }}" alt="t-SNE Projection" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Perplexity Sweep Diagnostics (Perplexity = 5 .. 100)</h4>
+            <img src="{{ url_for('serve_plot', filename='tsne_perplexity_sweep.png') }}" alt="Perplexity Sweep" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Cluster Size and Distance Distortion Pitfall</h4>
+            <img src="{{ url_for('serve_plot', filename='tsne_cluster_distortion_demo.png') }}" alt="Distortion Demo" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Session 26 Diagnostic Report (tsne_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in tsne_report_lines %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 07: UMAP Details -->
+<section id="umap-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 07 &bull; SESSION 27 &bull; TOPOLOGICAL EMBEDDING</p>
+            <h2>Uniform Manifold Approximation and Projection (UMAP)</h2>
+        </div>
+        <span class="status-pill">Fuzzy Simplicial Set Topology</span>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">2D UMAP Projection Colored by Placement Status</h4>
+            <img src="{{ url_for('serve_plot', filename='umap_placement_projection.png') }}" alt="UMAP Projection" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Hyperparameter Grid (n_neighbors &amp; min_dist)</h4>
+            <img src="{{ url_for('serve_plot', filename='umap_hyperparameter_grid.png') }}" alt="Hyperparameter Grid" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Out-of-Sample Transform: Projecting New Enrollees</h4>
+            <img src="{{ url_for('serve_plot', filename='umap_new_points_projection.png') }}" alt="New Points Projection" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Fuzzy Simplicial Sets Geometric Demonstration</h4>
+            <img src="{{ url_for('serve_plot', filename='umap_fuzzy_simplicial_demo.png') }}" alt="Simplicial Demo" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Session 27 Diagnostic Report (umap_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in umap_report_lines %}<div>{{ line }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Panel 08: Anomaly Detection Details -->
+<section id="anomaly-output" class="folder-panel card" hidden>
+    <div class="card-heading">
+        <div>
+            <p class="eyebrow">FOLDER 08 &bull; SESSION 28 &bull; UNCONSTRAINED ISOLATION</p>
+            <h2>Isolation Forest &amp; Discordant Profile Detection</h2>
+        </div>
+        <span class="status-pill">Recursive Split Anomaly Scoring</span>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px;">
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Anomaly Score Probability Distribution</h4>
+            <img src="{{ url_for('serve_plot', filename='anomaly_score_distribution.png') }}" alt="Score Distribution" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">ROC and PR Curves for Injected Anomalies</h4>
+            <img src="{{ url_for('serve_plot', filename='anomaly_roc_pr_curves.png') }}" alt="Anomaly ROC PR" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Detected Student Outlier Profile Archetypes</h4>
+            <img src="{{ url_for('serve_plot', filename='anomaly_detected_profiles.png') }}" alt="Outlier Profiles" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+        <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+            <h4 style="margin-bottom: 8px; font-size: 0.95rem;">Worked Example: Step-by-Step Isolation Trees</h4>
+            <img src="{{ url_for('serve_plot', filename='anomaly_worked_examples.png') }}" alt="Worked Examples" style="max-width: 100%; height: auto; border-radius: 6px;">
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <h3 style="margin-bottom: 8px;">Session 28 Diagnostic Report (anomaly_report.txt)</h3>
+        <div style="background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 340px; overflow-y: auto;">
+            {% for line in anomaly_report_lines %}<div>{{ line }}</div>{% endfor %}
         </div>
     </div>
 </section>

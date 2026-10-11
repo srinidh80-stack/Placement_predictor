@@ -148,7 +148,7 @@ def generate_random_forest_diagrams(model_data=None, df=None):
     sample_idx = np.random.RandomState(42).choice(len(X_train), size=sample_size, replace=False)
     X_sub, y_sub = X_train.iloc[sample_idx], y_train.iloc[sample_idx]
     
-    tree_counts = [30, 50, 75, 100, 150, 200]
+    tree_counts = [10, 25, 50, 75, 100, 150]
     oob_scores = []
     val_accs = []
     

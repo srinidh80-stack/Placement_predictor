@@ -1,0 +1,53 @@
+================================================================================
+MODULE 4 · SESSION 6: ANOMALY DETECTION REPORT
+Course: Machine Learning (25SC2107E) | Placement Prediction Dataset (50,000 Records)
+Reference: M4-Session6-Anomaly_Detection-new.pptx
+================================================================================
+
+1. WORKED NUMERICAL EXAMPLES VERIFICATION (SLIDES 6, 12, 16):
+   A. Isolation Forest (Slide 6):
+      Dataset: n=6, c(6) = 2.90
+      - Point 50: path h=1, ratio=-0.345, score s=0.787 -> Strong anomaly (s -> 1)
+      - Point 1 : path h=3, ratio=-1.034, score s=0.488 -> Normal
+      - Point 4 : path h=4, ratio=-1.379, score s=0.384 -> Normal
+
+   B. One-Class SVM (Slide 12):
+      Parameters: gamma=0.5, rho=0.35, SV1=(2,2), SV2=(3,3)
+      - Test A (2.5, 2.5): f(x) = +0.429 -> NORMAL (f(x) > 0)
+      - Test B (10,  10) : f(x) = -0.350 -> ANOMALY (f(x) < 0)
+
+   C. Autoencoder Preview (Slide 16):
+      Model: z = 0.5*x1 + 0.5*x2, x_hat = [z, z], threshold tau = 0.5
+      - Case 1 (normal)       : x=[4.0, 4.0] -> z=4.0 -> x_hat=[4.0, 4.0] -> Error=0.00 (NORMAL)
+      - Case 2 (near-normal)  : x=[5.0, 4.8] -> z=4.9 -> x_hat=[4.9, 4.9] -> Error=0.02 (NORMAL)
+      - Case 3 (anomaly)      : x=[1.0, 9.0] -> z=5.0 -> x_hat=[5.0, 5.0] -> Error=32.00 (ANOMALY (>> tau))
+
+2. PLACEMENT PREDICTION DATASET BENCHMARK EVALUATION:
+   Total student records: 50,000
+   Ground truth anomalies (IsAnomaly=1): 1,750 (3.50% contamination)
+
+                      Method  Precision  Recall  F1-Score  ROC-AUC  True Positives  False Positives  False Negatives  True Negatives  Fit Time (s)
+            Isolation Forest      88.86   88.86     88.86   0.9975            1555              195              195           48055          0.41
+               One-Class SVM      40.22   41.94     41.06   0.9363             734             1091             1016           47159          0.06
+Autoencoder (Reconstruction)      15.89   15.89     15.89   0.6708             278             1472             1472           46778          0.02
+
+3. ALGORITHM CONCORDANCE (JACCARD OVERLAP OF FLAGGED OUTLIERS):
+   - IsoForest vs OCSVM            : 30.38% overlap
+   - IsoForest vs Autoencoder      : 10.13% overlap
+   - OCSVM vs Autoencoder          : 28.14% overlap
+
+4. COMPARATIVE ARCHITECTURAL SYNTHESIS (SLIDE 18):
+   ---------------------------------------------------------------------------
+   Criterion              | Isolation Forest | One-Class SVM    | Autoencoder     
+   ---------------------------------------------------------------------------
+   Anomaly Signal         | Short path length | Outside boundary | High recon error
+   Key Parameter          | contamination    | nu (bound)       | bottleneck & tau
+   Large n Scaling        | Yes (near-linear) | Costly O(n^2-n^3) | Yes (mini-batch)
+   Non-Linear Bound       | Yes (tree splits) | Yes (RBF kernel) | Yes (activations)
+   Typical Domain         | Tabular, fraud   | Moderate tabular | Images, sequences
+   ---------------------------------------------------------------------------
+
+5. CONTRAST WITH LINEAR REGRESSION (SLIDES 9, 14, 17):
+   - Linear regression is supervised and harmed by outliers (distorting beta coefficients).
+   - Unsupervised anomaly detectors are built specifically to isolate and expose anomalies.
+   - Contamination and nu explicitly govern false alarm bounds without modifying underlying data.

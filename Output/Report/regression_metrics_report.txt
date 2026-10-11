@@ -1,0 +1,28 @@
+REGRESSION METRICS AND OUTLIER ROBUSTNESS REPORT
+================================================================================
+
+Task: Predict continuous Salary Package on placed cohort (22,999 train, 3,286 val).
+
+Model                        MAE    RMSE   MedAE   MAPE%      R2  RMSE/MAE
+Linear Regression          2.199   2.567   2.033    20.5  0.8581     1.167
+Random Forest Regressor    1.158   1.708   0.720     8.9  0.9372     1.475
+
+Best Model by MAE: Random Forest Regressor
+
+Empirical Outlier Robustness Experiment (Random Forest Regressor, 15.0 LPA error injected):
+ % Corrupted     MAE    RMSE   MedAE
+          0%   1.158   1.708   0.720
+          1%   1.295   2.276   0.730
+          2%   1.430   2.714   0.737
+          5%   1.847   3.771   0.764
+         10%   2.516   4.981   0.837
+
+Metric Escalation at 10% Contamination:
+  MAE change:   +117.3%
+  RMSE change:  +191.7%
+  MedAE change: +16.2%
+
+Methodological Takeaways:
+  1. RMSE heavily penalizes large errors due to squaring; always inspect RMSE/MAE ratio.
+  2. MedAE remains immune to small percentages of extreme outliers.
+  3. R-squared reflects proportion of variance explained and serves as standardized scale-free benchmark.

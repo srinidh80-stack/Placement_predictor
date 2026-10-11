@@ -1,5 +1,5 @@
 ======================================================================
-MODULE 4 Â· SESSION 21: K-MEANS CLUSTERING REPORT
+MODULE 4 · SESSION 21: K-MEANS CLUSTERING REPORT
 Course: Machine Learning (25SC2107E) | Placement Prediction Dataset
 ======================================================================
 

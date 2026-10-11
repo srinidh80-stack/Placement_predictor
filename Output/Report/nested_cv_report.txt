@@ -1,0 +1,20 @@
+NESTED CROSS-VALIDATION VS GRIDSEARCHCV REPORT
+================================================================================
+
+Model                                  n  Non-nested err  Nested err    Optimism removed       SE
+Decision tree (grid)                 200         -0.0026     -0.0292             +0.0267   0.0109
+Decision tree (grid)                 800         +0.0020     -0.0147             +0.0167   0.0034
+Logistic regression (tune C)         200         -0.0082     -0.0099             +0.0017   0.0033
+Logistic regression (tune C)         800         -0.0002     -0.0102             +0.0100   0.0044
+
+Inner Loop Hyperparameter Selection across Outer Folds (Decision Tree, n=800):
+  Fold 1: chosen max_depth=6, min_samples_leaf=1 -> outer test acc: 0.8438
+  Fold 2: chosen max_depth=6, min_samples_leaf=1 -> outer test acc: 0.8938
+  Fold 3: chosen max_depth=6, min_samples_leaf=5 -> outer test acc: 0.8375
+  Fold 4: chosen max_depth=6, min_samples_leaf=5 -> outer test acc: 0.9000
+  Fold 5: chosen max_depth=6, min_samples_leaf=1 -> outer test acc: 0.8812
+
+Methodological Insights:
+  1. Non-nested best_score_ suffers from selection bias: the winner's score is inflated.
+  2. Nested CV evaluates the tuning PROCEDURE honestly without data leakage.
+  3. Selection optimism is pronounced when training data is scarce and search grid is large.

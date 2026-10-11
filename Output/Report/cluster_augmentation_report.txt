@@ -1,0 +1,38 @@
+FEATURE AUGMENTATION WITH CLUSTERING REPORT
+================================================================================
+Clustering as feature augmentation: K-Means (fitted on 34,999 TRAIN rows only, never
+on validation, never on the label) adds cluster-membership and centroid-distance
+columns to 39 base features. Evaluated on 5,001 validation rows.
+
+Results at K=4:
+Model                Feature set              Accuracy      AUC  LogLoss
+Logistic Regression  Baseline                   0.9074   0.9733   0.1947
+Logistic Regression  + cluster label            0.9082   0.9739   0.1914
+Logistic Regression  + centroid distances       0.9156   0.9770   0.1809
+Logistic Regression  + label + distances        0.9168   0.9772   0.1801
+LightGBM             Baseline                   0.9236   0.9817   0.1633
+LightGBM             + cluster label            0.9240   0.9814   0.1638
+LightGBM             + centroid distances       0.9248   0.9814   0.1639
+LightGBM             + label + distances        0.9244   0.9815   0.1637
+
+Paired bootstrap of AUC improvement over Baseline (300 resamples):
+  Logistic Regression + cluster label         dAUC=+0.0006  95% CI [-0.0000, +0.0013]  -> NOT distinguishable from noise
+  Logistic Regression + centroid distances    dAUC=+0.0038  95% CI [+0.0026, +0.0052]  -> distinguishable from noise
+  Logistic Regression + label + distances     dAUC=+0.0039  95% CI [+0.0028, +0.0053]  -> distinguishable from noise
+  LightGBM            + cluster label         dAUC=-0.0003  95% CI [-0.0007, +0.0001]  -> NOT distinguishable from noise
+  LightGBM            + centroid distances    dAUC=-0.0003  95% CI [-0.0008, +0.0003]  -> NOT distinguishable from noise
+  LightGBM            + label + distances     dAUC=-0.0002  95% CI [-0.0008, +0.0003]  -> NOT distinguishable from noise
+
+Validation AUC vs K (centroid-distance features):
+  Logistic Regression  baseline 0.9733 | K=2:0.9757  K=3:0.9762  K=4:0.9770  K=6:0.9768  K=8:0.9773  K=12:0.9792
+  LightGBM             baseline 0.9817 | K=2:0.9814  K=3:0.9813  K=4:0.9814  K=6:0.9813  K=8:0.9814  K=12:0.9814
+
+Conclusion:
+  2 variant(s) improved and 0 degraded beyond noise (CI excludes zero).
+
+Methodological Insights:
+  1. Cluster features can only help a model that cannot already represent the
+     underlying non-linear manifold structure.
+  2. Confidence intervals that cross zero demonstrate that measured gains are
+     indistinguishable from sample variance.
+  3. Leakage safeguard: K-Means centroids fixed strictly at training time.

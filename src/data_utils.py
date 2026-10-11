@@ -168,6 +168,9 @@ def generate_and_save_splits(df=None, train_size=0.7, val_size=0.1, test_size=0.
         f.write(f"Val Placed rate: {val[config.TARGET_CLASSIFICATION].mean()*100:.2f}%\n")
         f.write(f"Test Placed rate: {test[config.TARGET_CLASSIFICATION].mean()*100:.2f}%\n")
         
+    # Also ensure encoded ready splits exist
+    ensure_ready_splits(train, val, test)
+    
     return {
         "train_len": len(train),
         "val_len": len(val),
@@ -176,6 +179,76 @@ def generate_and_save_splits(df=None, train_size=0.7, val_size=0.1, test_size=0.
         "val_path": str(val_path),
         "test_path": str(test_path),
         "report_path": str(split_report_path)
+    }
+
+
+def ensure_ready_splits(train_df=None, val_df=None, test_df=None):
+    """Ensure preprocessed train_ready.csv, val_ready.csv, test_ready.csv exist."""
+    from sklearn.compose import ColumnTransformer
+    from sklearn.impute import SimpleImputer
+    from sklearn.pipeline import Pipeline
+    from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, StandardScaler
+
+    config.SPLITS_DIR.mkdir(parents=True, exist_ok=True)
+    r_tr_path = config.SPLITS_DIR / "train_ready.csv"
+    r_va_path = config.SPLITS_DIR / "val_ready.csv"
+    r_te_path = config.SPLITS_DIR / "test_ready.csv"
+
+    if r_tr_path.exists() and r_va_path.exists() and r_te_path.exists():
+        return {
+            "train_ready": str(r_tr_path),
+            "val_ready": str(r_va_path),
+            "test_ready": str(r_te_path)
+        }
+
+    tr = pd.read_csv(config.SPLITS_DIR / "train.csv") if train_df is None else train_df.copy()
+    va = pd.read_csv(config.SPLITS_DIR / "val.csv") if val_df is None else val_df.copy()
+    te = pd.read_csv(config.SPLITS_DIR / "test.csv") if test_df is None else test_df.copy()
+
+    num_cols = [c for c in config.NUMERIC_COLUMNS if c in tr.columns]
+    cat_cols = [c for c in (config.CATEGORY_COLUMNS + config.YES_NO_COLUMNS) if c in tr.columns]
+    ord_cols = [c for c in ["CollegeTier", "CGPA_Tier"] if c in tr.columns]
+
+    numeric = Pipeline([("impute", SimpleImputer(strategy="median")), ("scale", StandardScaler())])
+    ordinal = Pipeline([
+        ("impute", SimpleImputer(strategy="most_frequent")),
+        ("encode", OrdinalEncoder(categories=[["Tier3", "Tier2", "Tier1"], ["Low", "Mid", "High"]]))
+    ])
+    categorical = Pipeline([
+        ("impute", SimpleImputer(strategy="most_frequent")),
+        ("encode", OneHotEncoder(handle_unknown="ignore", sparse_output=False))
+    ])
+
+    transformers = []
+    if num_cols:
+        transformers.append(("numeric", numeric, num_cols))
+    if ord_cols:
+        transformers.append(("ordinal", ordinal, ord_cols))
+    if cat_cols:
+        transformers.append(("categorical", categorical, cat_cols))
+
+    ct = ColumnTransformer(transformers)
+    ct.fit(tr)
+
+    feat_names = [f.split("__")[-1] for f in ct.get_feature_names_out()]
+
+    def _transform_subset(sub_df):
+        mat = ct.transform(sub_df)
+        res = pd.DataFrame(mat, columns=feat_names)
+        res["StudentID"] = sub_df["StudentID"].values
+        for col in ["PlacementStatus", "IsAnomaly", "Salary Package"]:
+            if col in sub_df.columns:
+                res[col] = sub_df[col].values
+        return res
+
+    _transform_subset(tr).to_csv(r_tr_path, index=False)
+    _transform_subset(va).to_csv(r_va_path, index=False)
+    _transform_subset(te).to_csv(r_te_path, index=False)
+
+    return {
+        "train_ready": str(r_tr_path),
+        "val_ready": str(r_va_path),
+        "test_ready": str(r_te_path)
     }
 
 

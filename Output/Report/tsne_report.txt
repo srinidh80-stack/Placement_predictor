@@ -1,0 +1,46 @@
+================================================================================
+MODULE 4 · SESSION 5: t-SNE (t-DISTRIBUTED STOCHASTIC NEIGHBOR EMBEDDING) REPORT
+Course: Machine Learning (25SC2107E) | Placement Prediction Dataset
+Reference: M4-Session5-TSNE_UMAP.pptx
+================================================================================
+
+1. WORKED NUMERICAL EXAMPLE VERIFICATION (SLIDE 7 & 17):
+   Dataset points: A=0, B=1, C=5, D=6 (1-D Euclidean)
+   Effect of sigma on Point A:
+     sigma=1.0 -> Perplexity=1.000, p_j|A = [0.0, 1.0, 0.0, 0.0]
+     sigma=2.0 -> Perplexity=1.288, p_j|A = [0.0, 0.941, 0.047, 0.012]
+     sigma=3.0 -> Perplexity=2.201, p_j|A = [0.0, 0.711, 0.187, 0.102]
+   Binary search solved sigmas for target Perplexity = 2.0:
+     sigma_A = 2.758
+     sigma_B = 2.236
+     sigma_C = 2.236
+     sigma_D = 2.758
+   Verification check: Matches slide 7 benchmark (sigma_A=sigma_D=2.758, sigma_B=sigma_C=2.236).
+
+2. CONTROLLED INTER-CLUSTER DISTANCE EXPERIMENT (SLIDE 9):
+   True High-D Gaps: Gap(1->2) = 31.79, Gap(2->3) = 284.57
+   True High-D Separation Ratio: 8.95x
+   Embedded 2D Gaps: Gap(1->2) = 28.86, Gap(2->3) = 29.1
+   Embedded 2D Separation Ratio: 1.01x
+   CONCLUSION: t-SNE objective minimizes KL-divergence strictly over local neighborhood
+   probabilities. Consequently, global inter-cluster gaps compress towards ~1x.
+   TAKEAWAY: NEVER interpret physical distance between separate clusters in a t-SNE plot.
+
+3. PLACEMENT DATASET PERPLEXITY SWEEP ANALYSIS (SLIDE 8, 15, 17):
+   Subsample size: 2,000 student records (zero target leakage)
+   Input features: 10 standardized metrics
+   Perplexity   | KL Divergence   | Fit Time (s)
+   ---------------------------------------------
+   2            | 1.0667          | 3.60        
+   5            | 1.2968          | 3.49        
+   15           | 1.3848          | 3.93        
+   30           | 1.3511          | 4.73        
+   50           | 1.2820          | 5.87        
+
+4. PRACTICAL GUIDELINES & INTERPRETATION (SLIDE 15 & 20):
+   - Perplexity controls effective neighborhood size (number of close neighbors).
+   - Perp = 2: Overly fine local focus fragments true clusters into artificial micro-islands.
+   - Perp = 30: Well-balanced representation separating high-aptitude placed cohorts.
+   - Perp = 50+: Neighborhood becomes excessively broad, risking blending of distinct cohorts.
+   - Note on New Points: t-SNE does not have a transform() function; adding new points
+     requires re-fitting on the entire combined dataset.

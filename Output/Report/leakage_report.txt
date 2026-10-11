@@ -1,0 +1,31 @@
+DATA LEAKAGE AUDIT AND DIAGNOSTIC REPORT
+================================================================================
+Split integrity audit (StudentID overlap):
+  train/val: 0 shared IDs
+  train/test: 0 shared IDs
+  val/test: 0 shared IDs
+Identical feature rows within train: 0
+
+Single-feature AUC scan, top 8 (flag > 0.95):
+  Salary Package            0.9976  <-- SUSPICIOUS
+  CGPA                      0.9032
+  CGPA_Tier                 0.8901
+  MockInterviewScore        0.8749
+  SoftSkillsRating          0.8657
+  Projects                  0.8612
+  CodingTestScore           0.8595
+  Certifications            0.8576
+
+Case                                               Leaky  Honest  Inflation
+1. Target leakage (+ Salary Package)              0.9984  0.9236    +0.0748
+2. Preprocessing leakage (scaler on all data)     0.8920  0.8922    -0.0002
+3. Feature-selection leakage (pure noise data)    0.7786  0.5198    +0.2588
+4. Duplicate leakage (30% copies in val)          0.9432  0.9188    +0.0244
+5. Selection-set reuse (best of 30, n=500)        0.9180  0.9102    +0.0078
+
+Key Conclusions & Safeguards:
+  1. Target leakage is catastrophic; never include downstream variables.
+  2. Feature selection must occur strictly inside cross-validation folds.
+  3. Duplicate leakage dramatically inflates metrics for high-capacity models.
+  4. Preprocessing leakage inflation was -0.0002 (safe on large datasets, crucial habit).
+  5. Always maintain an untouched final test split to eliminate model selection bias.

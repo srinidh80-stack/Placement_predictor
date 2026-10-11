@@ -1,0 +1,24 @@
+GRID SEARCH VS RANDOM SEARCH BENCHMARK REPORT
+================================================================================
+
+Evaluated on 3,000-row training subsample with 5-fold Stratified CV.
+
+Experiment A - Decision Tree (2 Hyperparameters, 30 fits each):
+  Grid Search:   Best CV=0.9057 (1.3s) | Params={'max_depth': 8, 'min_samples_leaf': 10}
+  Random Search: Best CV=0.9010 (1.4s) | Params={'max_depth': 8, 'min_samples_leaf': 11}
+
+Experiment B - LightGBM (5 Hyperparameters, Matched Budget=25 fits):
+  Grid Slice:    Best CV=0.9247 (5.0s) | Params={'learning_rate': 0.01, 'max_depth': 3, 'min_child_samples': 20, 'n_estimators': 300, 'num_leaves': 15}
+  Random Search: Best CV=0.9250 (7.7s) | Params={'learning_rate': np.float64(0.05018589264190914), 'max_depth': 3, 'min_child_samples': 11, 'n_estimators': 82, 'num_leaves': 8}
+
+Distinct Parameter Values Explored at Equal Budget:
+  n_estimators         Grid=3  |  Random=24
+  learning_rate        Grid=1  |  Random=25
+  max_depth            Grid=1  |  Random=8
+  num_leaves           Grid=3  |  Random=20
+  min_child_samples    Grid=3  |  Random=21
+
+Key Takeaways:
+  1. In low dimensions, Grid Search easily achieves full factorial coverage.
+  2. In high dimensions, Grid Search spends budget varying non-influential parameters.
+  3. Random Search explores the continuous marginal distribution of every parameter independently.

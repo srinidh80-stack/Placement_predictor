@@ -1,0 +1,32 @@
+CROSS-VALIDATION EVALUATION & METHODOLOGY REPORT
+================================================================================
+
+1. Estimator Error Comparison (Holdout vs CV):
+   Method            Mean error     SD estimate     RMSE
+   80/20 holdout        +0.0034          0.0268   0.0274
+   5-fold CV            +0.0020          0.0158   0.0163
+   10-fold CV           +0.0017          0.0143   0.0150
+
+2. Stratification & Order Hazards:
+   KFold shuffled positive rate sd: 0.0674
+   StratifiedKFold positive rate sd: 0.0000
+
+3. Choice of K Benchmarks:
+   Logistic Regression (Validation reference 0.9078):
+     K= 3: CV mean 0.9138  fold sd 0.0028  runtime 0.5s
+     K= 5: CV mean 0.9144  fold sd 0.0047  runtime 0.9s
+     K=10: CV mean 0.9146  fold sd 0.0059  runtime 2.0s
+   LightGBM (Validation reference 0.9236):
+     K= 3: CV mean 0.9234  fold sd 0.0019  runtime 1.3s
+     K= 5: CV mean 0.9241  fold sd 0.0025  runtime 2.4s
+     K=10: CV mean 0.9235  fold sd 0.0041  runtime 5.0s
+
+4. Overfitting Detection (Train Score vs 5-fold CV Score):
+   Logistic Regression    train=0.9151  CV=0.9144  gap=+0.0008  AUC=0.9744  F1=0.9352
+   LightGBM               train=0.9354  CV=0.9241  gap=+0.0113  AUC=0.9809  F1=0.9428
+   Unconstrained tree     train=1.0000  CV=0.8890  gap=+0.1110  AUC=0.8781  F1=0.9153
+
+Practical Guidelines:
+  - Always use StratifiedKFold (K=5 or K=10) for classification tasks.
+  - Encapsulate preprocessing (scaling/imputation/encoding) within Scikit-Learn Pipelines.
+  - Unconstrained trees achieve ~100% training accuracy but fail to generalize; CV exposes this.
